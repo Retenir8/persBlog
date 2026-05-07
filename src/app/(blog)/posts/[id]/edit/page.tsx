@@ -1,0 +1,46 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import PostEditorForm from "@/components/blog/PostEditorForm";
+import { auth } from "@/lib/auth";
+import {
+  listCategories,
+  listTags,
+} from "@/lib/services/categoryTagService";
+import { getPostById } from "@/lib/services/postService";
+
+export default async function EditPostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const [post, categories, tags] = await Promise.all([
+    getPostById(id),
+    listCategories(),
+    listTags(),
+  ]);
+
+  if (!post) {
+    notFound();
+  }
+  if (post.authorId !== session.user.id && session.user.role !== "ADMIN") {
+    redirect("/");
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Link href={`/posts/${post.id}`} className="text-sm text-zinc-500 hover:underline">
+          ← 查看文章
+        </Link>
+        <h1 className="text-2xl font-bold">编辑文章</h1>
+      </div>
+      <PostEditorForm categories={categories} tags={tags} post={post} />
+    </div>
+  );
+}

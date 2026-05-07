@@ -1,0 +1,54 @@
+import Link from "next/link";
+import type { Post, User, Category, PostTag, Tag } from "@prisma/client";
+
+type PostWithRelations = Post & {
+  author: Pick<User, "id" | "name">;
+  category: Category | null;
+  tags: (PostTag & { tag: Tag })[];
+};
+
+function stripHtml(html: string) {
+  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+export function PostCard({ post }: { post: PostWithRelations }) {
+  const excerpt = stripHtml(post.content).slice(0, 160);
+  const date = new Intl.DateTimeFormat("zh-CN", {
+    dateStyle: "medium",
+  }).format(new Date(post.createdAt));
+
+  return (
+    <article className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
+      <Link href={`/posts/${post.id}`}>
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+          {post.title}
+        </h2>
+      </Link>
+      <p className="mt-2 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
+        {excerpt}
+        {stripHtml(post.content).length > 160 ? "…" : ""}
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-500">
+        <span>{post.author.name || "作者"}</span>
+        <span>·</span>
+        <time dateTime={post.createdAt.toISOString()}>{date}</time>
+        {post.category && (
+          <>
+            <span>·</span>
+            <span className="rounded-full bg-zinc-100 px-2 py-0.5 dark:bg-zinc-800">
+              {post.category.name}
+            </span>
+          </>
+        )}
+        {post.tags.map((pt) => (
+          <span
+            key={pt.tagId}
+            className="rounded-full border border-zinc-200 px-2 py-0.5 dark:border-zinc-700"
+          >
+            {pt.tag.name}
+          </span>
+        ))}
+      </div>
+    </article>
+  );
+}

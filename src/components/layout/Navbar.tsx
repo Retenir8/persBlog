@@ -36,6 +36,18 @@ export async function Navbar() {
           >
             文章
           </Link>
+          <Link
+            href="/categories"
+            className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+          >
+            分类
+          </Link>
+          <Link
+            href="/tags"
+            className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+          >
+            标签
+          </Link>
           {session?.user ? (
             <>
               <Link

@@ -12,6 +12,15 @@ model User {
   email     String    @unique
   password  String
   name      String?
+  avatar    String?
+  bio       String?
+  signature String?
+  tags      String?
+  location  String?
+  occupation String?
+  github    String?
+  wechat    String?
+  website   String?
   role      Role      @default(USER)
   posts     Post[]
   comments  Comment[]
@@ -47,6 +56,7 @@ model Post {
   category   Category? @relation(fields: [categoryId], references: [id])
   tags       PostTag[]
   comments   Comment[]
+  viewCount  Int       @default(0)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }

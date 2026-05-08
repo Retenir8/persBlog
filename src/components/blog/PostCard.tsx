@@ -29,7 +29,9 @@ export function PostCard({ post }: { post: PostWithRelations }) {
         {stripHtml(post.content).length > 160 ? "…" : ""}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-500">
-        <span>{post.author.name || "作者"}</span>
+        <Link href={`/users/${post.author.id}`} className="text-blue-600 hover:underline dark:text-blue-400">
+          {post.author.name || "作者"}
+        </Link>
         <span>·</span>
         <time dateTime={post.createdAt.toISOString()}>{date}</time>
         {post.category && (

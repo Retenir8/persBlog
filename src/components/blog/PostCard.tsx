@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Post, User, Category, PostTag, Tag } from "@prisma/client";
+import { ViewCount } from "./ViewCount";
 
 type PostWithRelations = Post & {
   author: Pick<User, "id" | "name">;
@@ -34,6 +35,8 @@ export function PostCard({ post }: { post: PostWithRelations }) {
         </Link>
         <span>·</span>
         <time dateTime={post.createdAt.toISOString()}>{date}</time>
+        <span>·</span>
+        <ViewCount postId={post.id} initialCount={post.viewCount} />
         {post.category && (
           <>
             <span>·</span>

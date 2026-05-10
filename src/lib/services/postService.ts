@@ -41,7 +41,7 @@ export async function searchPosts(params: SearchParams) {
 }
 
 export async function getPostById(id: string) {
-  return prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id },
     include: {
       author: { select: { id: true, name: true, email: true } },
@@ -49,6 +49,15 @@ export async function getPostById(id: string) {
       tags: { include: { tag: true } },
     },
   });
+
+  if (!post) return null;
+
+  const likeCount = await prisma.like.count({ where: { postId: id } });
+
+  return {
+    ...post,
+    likeCount,
+  };
 }
 
 export async function canViewPost(

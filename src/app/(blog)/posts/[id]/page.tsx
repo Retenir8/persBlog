@@ -9,6 +9,8 @@ import {
 import { getCommentsForPost } from "@/lib/services/commentService";
 import { serializeComments } from "@/lib/commentSerialize";
 import CommentSection from "@/components/comment/CommentSection";
+import { ViewCount } from "@/components/blog/ViewCount";
+import { LikeButton } from "@/components/blog/LikeButton";
 
 export default async function PostDetailPage({
   params,
@@ -71,11 +73,13 @@ export default async function PostDetailPage({
           </p>
         )}
         <h1 className="text-3xl font-bold leading-tight">{post.title}</h1>
-        <div className="mt-4 flex flex-wrap gap-3 text-sm text-zinc-500">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-zinc-500">
           <span>{post.author.name || "作者"}</span>
           <time dateTime={post.createdAt.toISOString()}>
             {dateFmt.format(post.createdAt)}
           </time>
+          <ViewCount postId={post.id} initialCount={post.viewCount} isDetailPage={true} />
+          <LikeButton postId={post.id} initialCount={post.likeCount || 0} initialLiked={false} />
           {post.category && (
             <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
               {post.category.name}

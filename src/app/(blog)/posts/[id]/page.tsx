@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { outlineLinkClassName } from "@/components/ui/Button";
 import { auth } from "@/lib/auth";
 import {
   getPostById,
@@ -49,18 +50,18 @@ export default async function PostDetailPage({
 
   return (
     <article className="mx-auto max-w-3xl">
-      <div className="mb-6 flex flex-wrap gap-3">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <Link href="/posts" className={outlineLinkClassName}>
+          返回列表
+        </Link>
         {canEdit && (
           <Link
             href={`/posts/${post.id}/edit`}
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-600"
+            className={outlineLinkClassName}
           >
             编辑
           </Link>
         )}
-        <Link href="/posts" className="text-sm text-zinc-500 hover:underline">
-          ← 返回列表
-        </Link>
       </div>
 
       <header className="border-b border-zinc-200 pb-6 dark:border-zinc-800">

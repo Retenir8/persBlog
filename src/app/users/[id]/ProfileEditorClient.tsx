@@ -9,9 +9,17 @@ interface UserWithPosts extends User {
   posts: Post[];
 }
 
-export function ProfileEditorClient({ user, isOwner }: { user: UserWithPosts; isOwner: boolean }) {
+export function ProfileEditorClient({
+  user,
+  isOwner,
+  initialEditing = false,
+}: {
+  user: UserWithPosts;
+  isOwner: boolean;
+  initialEditing?: boolean;
+}) {
   const router = useRouter();
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(() => Boolean(isOwner && initialEditing));
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState({
     name: user.name || "",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import PostEditorForm from "@/components/blog/PostEditorForm";
+import { outlineLinkClassName } from "@/components/ui/Button";
 import { auth } from "@/lib/auth";
 import {
   listCategories,
@@ -33,13 +34,13 @@ export default async function EditPostPage({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href={`/posts/${post.id}`} className="text-sm text-zinc-500 hover:underline">
-          ← 查看文章
+    <div className="mx-auto max-w-3xl space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link href={`/posts/${post.id}`} className={outlineLinkClassName}>
+          查看文章
         </Link>
-        <h1 className="text-2xl font-bold">编辑文章</h1>
       </div>
+      <h1 className="text-2xl font-bold">编辑文章</h1>
       <PostEditorForm categories={categories} tags={tags} post={post} />
     </div>
   );

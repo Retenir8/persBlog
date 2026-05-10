@@ -33,7 +33,6 @@ export default function PostEditorForm({
           return initial;
         }
   );
-  const [published, setPublished] = useState(post?.published ?? true);
   const [busy, setBusy] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [newTag, setNewTag] = useState("");
@@ -75,8 +74,7 @@ export default function PostEditorForm({
     router.refresh();
   }
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function save(published: boolean) {
     setBusy(true);
     try {
       const payload = {
@@ -106,7 +104,10 @@ export default function PostEditorForm({
   }
 
   return (
-    <form onSubmit={submit} className="mx-auto max-w-3xl space-y-6">
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      className="mx-auto max-w-3xl space-y-6"
+    >
       <label className="block text-sm font-medium">
         标题
         <Input
@@ -126,7 +127,7 @@ export default function PostEditorForm({
         <label className="block text-sm font-medium">
           分类
           <select
-            className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
+            className="mt-1 box-border h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
           >
@@ -138,19 +139,25 @@ export default function PostEditorForm({
             ))}
           </select>
         </label>
-        <div className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">新建分类</span>
-          <div className="flex gap-2">
+        <label className="block text-sm font-medium">
+          新建分类
+          <div className="mt-1 flex gap-2">
             <Input
+              className="h-10 min-w-0 flex-1"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               placeholder="名称"
             />
-            <Button type="button" variant="secondary" onClick={addCategory}>
+            <Button
+              type="button"
+              variant="secondary"
+              className="h-10 shrink-0 px-4"
+              onClick={addCategory}
+            >
               添加
             </Button>
           </div>
-        </div>
+        </label>
       </div>
 
       <div>
@@ -172,37 +179,50 @@ export default function PostEditorForm({
             </label>
           ))}
         </div>
-        <div className="mt-3 flex gap-2">
-          <Input
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-            placeholder="新标签"
-          />
-          <Button type="button" variant="secondary" onClick={addTag}>
-            添加标签
-          </Button>
-        </div>
+        <label className="mt-3 block text-sm font-medium">
+          新标签
+          <div className="mt-1 flex gap-2">
+            <Input
+              className="h-10 min-w-0 flex-1"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              placeholder="名称"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              className="h-10 shrink-0 px-4"
+              onClick={addTag}
+            >
+              添加
+            </Button>
+          </div>
+        </label>
       </div>
 
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={published}
-          onChange={(e) => setPublished(e.target.checked)}
-        />
-        立即发布（关闭则保存为草稿）
-      </label>
-
-      <div className="flex gap-3">
-        <Button type="submit" disabled={busy}>
-          {busy ? "保存中…" : "保存"}
+      <div className="flex flex-wrap gap-3">
+        <Button
+          type="button"
+          disabled={busy}
+          onClick={() => void save(true)}
+        >
+          {busy ? "保存中…" : "发布"}
         </Button>
         <Button
           type="button"
           variant="secondary"
+          disabled={busy}
           onClick={() => router.back()}
         >
           取消
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={busy}
+          onClick={() => void save(false)}
+        >
+          {busy ? "保存中…" : "保存为草稿"}
         </Button>
       </div>
     </form>

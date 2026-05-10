@@ -62,6 +62,12 @@ export async function Navbar() {
               >
                 我的文章
               </Link>
+              <Link
+                href={`/users/${session.user.id}?edit=1`}
+                className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+              >
+                编辑信息
+              </Link>
               {session.user.role === "ADMIN" && (
                 <Link
                   href="/admin"

@@ -83,3 +83,22 @@ model Comment {
   replies   Comment[] @relation("CommentReplies")
   createdAt DateTime  @default(now())
 }
+
+enum NeteaseKind {
+  SONG
+  PLAYLIST
+}
+
+model MusicItem {
+  id          String      @id @default(cuid())
+  neteaseId   String
+  kind        NeteaseKind @default(SONG)
+  note        String?
+  coverUrl    String?
+  trackTitle  String?
+  artistName  String?
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+
+  @@unique([neteaseId, kind])
+}

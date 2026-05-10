@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { auth } from "@/lib/auth";
 import { searchPosts } from "@/lib/services/postService";
 import { listCategories, listTags } from "@/lib/services/categoryTagService";
 import { PostCard } from "./PostCard";
+import { TaxonomyManageSection } from "./TaxonomyManageSection";
 
 function firstParam(v: string | string[] | undefined) {
   if (Array.isArray(v)) return v[0];
@@ -22,7 +24,7 @@ export async function PostIndex({
   const categoryId = rawCat || undefined;
   const tagId = rawTag || undefined;
 
-  const [result, categories, tags] = await Promise.all([
+  const [result, categories, tags, session] = await Promise.all([
     searchPosts({
       page,
       pageSize: 10,
@@ -32,6 +34,7 @@ export async function PostIndex({
     }),
     listCategories(),
     listTags(),
+    auth(),
   ]);
 
   const buildQuery = (overrides: Record<string, string | undefined>) => {
@@ -103,6 +106,12 @@ export async function PostIndex({
           筛选
         </button>
       </form>
+
+      <TaxonomyManageSection
+        categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+        tags={tags.map((t) => ({ id: t.id, name: t.name }))}
+        canManage={!!session?.user}
+      />
 
       {result.posts.length === 0 ? (
         <p className="text-center text-zinc-500">暂无文章</p>

@@ -1,50 +1,113 @@
-import { NextResponse } from "next/server";
-import {
-  createComment,
-  getCommentsForPost,
-} from "@/lib/services/commentService";
-import { getCurrentUser } from "@/lib/auth-utils";
-import { getPostById, canViewPost } from "@/lib/services/postService";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
 
-type RouteContext = { params: Promise<{ id: string }> };
-
-export async function GET(_req: Request, { params }: RouteContext) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
-  const post = await getPostById(id);
-  if (!post) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  try {
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId: id,
+        parentId: null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json(comments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch comments" },
+      { status: 500 }
+    );
   }
-  const user = await getCurrentUser();
-  const ok = await canViewPost(post, user?.id, user?.role);
-  if (!ok) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-  const comments = await getCommentsForPost(id);
-  return NextResponse.json(comments);
 }
 
-export async function POST(req: Request, { params }: RouteContext) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await params;
-    const body = await req.json();
-    const content = body.content as string;
-    if (typeof content !== "string" || !content.trim()) {
+    const session = await auth();
+    const body = await request.json();
+    const { content, parentId, guestName } = body;
+
+    if (!content || content.trim().length === 0) {
       return NextResponse.json(
-        { error: "content is required" },
+        { error: "Comment content is required" },
         { status: 400 }
       );
     }
-    const user = await getCurrentUser();
-    const comment = await createComment(
-      id,
-      content.trim(),
-      user?.id,
-      typeof body.guestName === "string" ? body.guestName : undefined,
-      typeof body.parentId === "string" ? body.parentId : undefined
-    );
+
+    if (!session?.user && !guestName?.trim()) {
+      return NextResponse.json(
+        { error: "Guest name is required" },
+        { status: 400 }
+      );
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    const comment = await prisma.comment.create({
+      data: {
+        content: content.trim(),
+        postId: id,
+        userId: session?.user?.id,
+        parentId: parentId || null,
+        guestName: session?.user ? undefined : guestName?.trim(),
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
     return NextResponse.json(comment, { status: 201 });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 400 });
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    return NextResponse.json(
+      { error: "Failed to create comment" },
+      { status: 500 }
+    );
   }
 }

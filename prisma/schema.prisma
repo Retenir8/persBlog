@@ -24,6 +24,7 @@ model User {
   role      Role      @default(USER)
   posts     Post[]
   comments  Comment[]
+  likes     Like[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -56,6 +57,7 @@ model Post {
   category   Category? @relation(fields: [categoryId], references: [id])
   tags       PostTag[]
   comments   Comment[]
+  likes      Like[]
   viewCount  Int       @default(0)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -82,4 +84,15 @@ model Comment {
   parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
   replies   Comment[] @relation("CommentReplies")
   createdAt DateTime  @default(now())
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
 }

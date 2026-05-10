@@ -151,35 +151,45 @@ export function ProfileEditorClient({ user, isOwner }: { user: UserWithPosts; is
         <div>
           <h2 className="text-xl font-bold mb-4">联系我</h2>
           <div className="space-y-3">
-            {data.github && (
-              <div className="flex items-center gap-2">
-                <span>🔗</span>
-                {editing ? (
-                  <input type="text" value={data.github} onChange={(e) => setData({...data, github: e.target.value})} placeholder="GitHub" className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
-                ) : (
-                  <a href={data.github} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">GitHub</a>
-                )}
-              </div>
-            )}
-            {data.wechat && (
-              <div className="flex items-center gap-2">
-                <span>📱</span>
-                {editing ? (
-                  <input type="text" value={data.wechat} onChange={(e) => setData({...data, wechat: e.target.value})} placeholder="微信" className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
-                ) : (
-                  <span>{data.wechat}</span>
-                )}
-              </div>
-            )}
-            {data.website && (
-              <div className="flex items-center gap-2">
-                <span>🌐</span>
-                {editing ? (
+            {editing ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <span>🔗</span>
+                  <input type="text" value={data.github} onChange={(e) => setData({...data, github: e.target.value})} placeholder="GitHub 链接" className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>📱</span>
+                  <input type="text" value={data.wechat} onChange={(e) => setData({...data, wechat: e.target.value})} placeholder="微信号" className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>🌐</span>
                   <input type="text" value={data.website} onChange={(e) => setData({...data, website: e.target.value})} placeholder="个人网站" className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
-                ) : (
-                  <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">个人网站</a>
+                </div>
+              </>
+            ) : (
+              <>
+                {data.github && (
+                  <div className="flex items-center gap-2">
+                    <span>🔗</span>
+                    <a href={data.github} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">GitHub</a>
+                  </div>
                 )}
-              </div>
+                {data.wechat && (
+                  <div className="flex items-center gap-2">
+                    <span>📱</span>
+                    <span>{data.wechat}</span>
+                  </div>
+                )}
+                {data.website && (
+                  <div className="flex items-center gap-2">
+                    <span>🌐</span>
+                    <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">个人网站</a>
+                  </div>
+                )}
+                {!data.github && !data.wechat && !data.website && (
+                  <p className="text-zinc-500 text-sm">暂无联系方式</p>
+                )}
+              </>
             )}
           </div>
         </div>

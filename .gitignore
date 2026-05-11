@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# Local photo uploads (keep directory via .gitkeep)
+/public/uploads/photos/*
+!/public/uploads/photos/.gitkeep

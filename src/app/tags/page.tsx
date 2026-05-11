@@ -12,7 +12,7 @@ export default async function TagsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">所有标签</h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
           浏览文章标签；登录后可添加、编辑或删除标签。
         </p>
       </div>

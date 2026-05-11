@@ -86,6 +86,17 @@ model Comment {
   createdAt DateTime  @default(now())
 }
 
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
 enum NeteaseKind {
   SONG
   PLAYLIST
@@ -103,4 +114,21 @@ model MusicItem {
   createdAt   DateTime    @default(now())
 
   @@unique([neteaseId, kind])
+}
+
+model PhotoCategory {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  sortOrder Int     @default(0)
+  photos    Photo[]
+}
+
+model Photo {
+  id         String         @id @default(cuid())
+  title      String?
+  imageUrl   String
+  categoryId String?
+  category   PhotoCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  sortOrder  Int            @default(0)
+  createdAt  DateTime       @default(now())
 }

@@ -25,12 +25,17 @@ export default async function MyPostsPage({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">我的博客</h1>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">我的博客</h1>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            管理你已发布的文章与草稿。
+          </p>
+        </div>
         <Link
           href="/posts/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-lg bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
         >
           新建文章
         </Link>

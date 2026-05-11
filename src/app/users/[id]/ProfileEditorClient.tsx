@@ -72,17 +72,37 @@ export function ProfileEditorClient({
     <div className="space-y-8">
       {/* Edit Button */}
       {isOwner && (
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Link
+            href="/myposts"
+            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            我的文章
+          </Link>
           {!editing ? (
-            <button onClick={() => setEditing(true)} className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800">
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
               ✏️ 编辑
             </button>
           ) : (
-            <div className="flex gap-2">
-              <button onClick={save} disabled={saving} className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900">
+            <div className="flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                onClick={save}
+                disabled={saving}
+                className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+              >
                 {saving ? "保存中..." : "保存"}
               </button>
-              <button onClick={cancel} disabled={saving} className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300">
+              <button
+                type="button"
+                onClick={cancel}
+                disabled={saving}
+                className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300"
+              >
                 取消
               </button>
             </div>
@@ -95,7 +115,9 @@ export function ProfileEditorClient({
         <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
           <span className="text-4xl">👤</span>
         </div>
-        <h1 className="text-2xl font-bold mb-2">{data.name || "未设置昵称"}</h1>
+        <h1 className="mb-2 text-3xl font-bold tracking-tight">
+          {data.name || "未设置昵称"}
+        </h1>
         {data.tags && (
           <div className="flex flex-wrap justify-center gap-2 mb-3">
             {data.tags.split(",").map((t, i) => (
@@ -108,7 +130,9 @@ export function ProfileEditorClient({
             <input type="text" value={data.tags} onChange={(e) => setData({...data, tags: e.target.value})} placeholder="个人标签，逗号分隔" className="w-full max-w-xs rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
           </div>
         )}
-        <p className="text-zinc-600 dark:text-zinc-400">{data.signature || "未设置签名"}</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          {data.signature || "未设置签名"}
+        </p>
         {editing && (
           <input type="text" value={data.signature} onChange={(e) => setData({...data, signature: e.target.value})} placeholder="个人签名" className="w-full max-w-xs mt-4 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
         )}
@@ -203,6 +227,19 @@ export function ProfileEditorClient({
         </div>
 
         <div>
+          <h2 className="text-xl font-bold mb-4">最新文章</h2>
+          <div className="space-y-2">
+            {published.slice(0, 3).map((post) => (
+              <Link key={post.id} href={`/posts/${post.id}`} className="block p-2 rounded-lg hover:bg-zinc-50">
+                <p className="font-medium text-sm truncate">{post.title}</p>
+                <p className="text-xs text-zinc-500">{new Date(post.createdAt).toLocaleDateString()}</p>
+              </Link>
+            ))}
+            {published.length === 0 && <p className="text-zinc-500 text-sm">暂无文章</p>}
+          </div>
+        </div>
+
+        <div>
           <h2 className="text-xl font-bold mb-4">博客统计</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg">
@@ -213,19 +250,6 @@ export function ProfileEditorClient({
               <p className="text-2xl font-bold">{drafts.length}</p>
               <p className="text-sm text-zinc-500">草稿</p>
             </div>
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-bold mb-4">最新文章</h2>
-          <div className="space-y-2">
-            {published.slice(0, 3).map((post) => (
-              <Link key={post.id} href={`/posts/${post.id}`} className="block p-2 rounded-lg hover:bg-zinc-50">
-                <p className="font-medium text-sm truncate">{post.title}</p>
-                <p className="text-xs text-zinc-500">{new Date(post.createdAt).toLocaleDateString()}</p>
-              </Link>
-            ))}
-            {published.length === 0 && <p className="text-zinc-500 text-sm">暂无文章</p>}
           </div>
         </div>
       </div>

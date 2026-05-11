@@ -28,8 +28,10 @@ export default async function UserProfilePage({
   if (!user) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-2xl font-bold">用户不存在</h1>
-        <p className="mt-2 text-zinc-500">该用户不存在或已删除</p>
+        <h1 className="text-3xl font-bold tracking-tight">用户不存在</h1>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          该用户不存在或已删除
+        </p>
       </div>
     );
   }

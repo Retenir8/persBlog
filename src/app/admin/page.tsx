@@ -25,11 +25,13 @@ export default async function AdminPage({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">管理后台 · 全部文章</h1>
-      <p className="text-sm text-zinc-500">
-        共 {total} 篇 · 可对任意文章删除。普通用户需在「我的博客」管理自己的稿件。
-      </p>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">管理后台 · 全部文章</h1>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          共 {total} 篇 · 可对任意文章删除。普通用户需在「我的博客」管理自己的稿件。
+        </p>
+      </div>
 
       {posts.length === 0 ? (
         <p>暂无文章</p>

@@ -31,6 +31,12 @@ export async function Navbar() {
           个人博客
         </Link>
         <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <Link
+            href="/guestbook"
+            className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+          >
+            留言板
+          </Link>
           <NavArticleMenu canWritePost={!!session?.user} />
           <Link
             href="/music"

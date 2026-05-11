@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Post, User, Category, PostTag, Tag } from "@prisma/client";
+import type { Post, User, Category, PostTag, Tag } from "@/generated/prisma";
 import { ViewCount } from "./ViewCount";
 
 type PostWithRelations = Post & {

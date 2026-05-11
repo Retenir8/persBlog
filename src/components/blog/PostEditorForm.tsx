@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Category, Post, Tag } from "@prisma/client";
+import type { Category, Post, Tag } from "@/generated/prisma";
 import Editor from "@/components/blog/Editor";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";

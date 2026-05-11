@@ -1,7 +1,9 @@
-import Link from "next/link";
 import { getUserWithPosts } from "@/lib/services/userService";
 import { auth } from "@/lib/auth";
 import { ProfileEditorClient } from "./ProfileEditorClient";
+import { GuestbookSection } from "@/components/guestbook/GuestbookSection";
+import type { GuestbookEntryDTO } from "@/components/guestbook/GuestbookSection";
+import { listGuestbookForHost } from "@/lib/services/guestbookService";
 
 function firstSearchParam(
   v: string | string[] | undefined
@@ -38,11 +40,31 @@ export default async function UserProfilePage({
 
   const isOwner = session?.user?.id === id;
 
+  const gbRaw = await listGuestbookForHost(id);
+  const guestbookInitial: GuestbookEntryDTO[] = (gbRaw ?? []).map((e) => ({
+    id: e.id,
+    content: e.content,
+    guestName: e.guestName,
+    authorUserId: e.authorUserId,
+    author: e.author,
+    createdAt:
+      e.createdAt instanceof Date
+        ? e.createdAt.toISOString()
+        : String(e.createdAt),
+  }));
+
   return (
-    <ProfileEditorClient
-      user={user}
-      isOwner={isOwner}
-      initialEditing={wantEdit && isOwner}
-    />
+    <div className="space-y-0">
+      <ProfileEditorClient
+        user={user}
+        isOwner={isOwner}
+        initialEditing={wantEdit && isOwner}
+      />
+      <GuestbookSection
+        hostUserId={id}
+        hostDisplayName={user.name}
+        initialEntries={guestbookInitial}
+      />
+    </div>
   );
 }

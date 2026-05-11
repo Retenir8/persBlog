@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -30,8 +31,24 @@ model User {
   musicItems MusicItem[]
   photoCategories PhotoCategory[]
   photos    Photo[]
+  guestbookReceived GuestbookEntry[] @relation("GuestbookHost")
+  guestbookWritten  GuestbookEntry[] @relation("GuestbookAuthor")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model GuestbookEntry {
+  id           String   @id @default(cuid())
+  content      String
+  hostUserId   String
+  host         User     @relation("GuestbookHost", fields: [hostUserId], references: [id], onDelete: Cascade)
+  authorUserId String?
+  author       User?    @relation("GuestbookAuthor", fields: [authorUserId], references: [id], onDelete: SetNull)
+  guestName    String?
+  createdAt    DateTime @default(now())
+
+  @@index([hostUserId])
+  @@index([createdAt])
 }
 
 enum Role {

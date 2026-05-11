@@ -4,7 +4,7 @@ import {
   listPhotoCategories,
 } from "@/lib/services/photoService";
 import { requireAuth } from "@/lib/auth-utils";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma";
 
 export async function GET() {
   try {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { NeteaseKind } from "@prisma/client";
+import type { NeteaseKind } from "@/generated/prisma";
 import { SongAudioPlayer } from "@/components/music/SongAudioPlayer";
 import { Button, outlineLinkClassName } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";

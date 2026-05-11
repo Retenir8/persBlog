@@ -1,4 +1,4 @@
-import type { NeteaseKind } from "@prisma/client";
+import type { NeteaseKind } from "@/generated/prisma";
 
 export type NeteaseDisplayMeta = {
   coverUrl: string | null;

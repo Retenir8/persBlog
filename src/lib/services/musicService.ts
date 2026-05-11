@@ -1,4 +1,4 @@
-import type { MusicItem } from "@prisma/client";
+import type { MusicItem } from "@/generated/prisma";
 import { prisma } from "@/lib/db";
 import { fetchNeteaseDisplayMeta } from "@/lib/neteaseMeta";
 import { parseNeteaseUrl } from "@/lib/netease";

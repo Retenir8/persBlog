@@ -4,9 +4,10 @@ import { auth } from "@/lib/auth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; commentId: string } }
+  { params }: { params: Promise<{ id: string; commentId: string }> }
 ) {
   try {
+    const { commentId } = await params;
     const session = await auth();
 
     if (!session?.user) {
@@ -14,7 +15,7 @@ export async function DELETE(
     }
 
     const comment = await prisma.comment.findUnique({
-      where: { id: params.commentId },
+      where: { id: commentId },
     });
 
     if (!comment) {
@@ -26,7 +27,7 @@ export async function DELETE(
     }
 
     await prisma.comment.delete({
-      where: { id: params.commentId },
+      where: { id: commentId },
     });
 
     return NextResponse.json({ success: true });

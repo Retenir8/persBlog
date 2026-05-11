@@ -4,7 +4,7 @@ import {
   updatePhotoCategory,
 } from "@/lib/services/photoService";
 import { requireAuth } from "@/lib/auth-utils";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma";
 
 type RouteContext = { params: Promise<{ id: string }> };
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { User, Post } from "@prisma/client";
+import type { User, Post } from "@/generated/prisma";
 
 interface UserWithPosts extends User {
   posts: Post[];

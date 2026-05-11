@@ -19,29 +19,23 @@ export async function PostIndex({
 }) {
   const page = Math.max(1, parseInt(String(firstParam(searchParams.page) || "1"), 10));
   const keyword = String(firstParam(searchParams.keyword) || "").trim() || undefined;
-  const rawCat = String(firstParam(searchParams.categoryId) || "").trim();
-  const rawTag = String(firstParam(searchParams.tagId) || "").trim();
-  const categoryId = rawCat || undefined;
-  const tagId = rawTag || undefined;
 
-  const [result, categories, tags, session] = await Promise.all([
+  const session = await auth();
+  const uid = session?.user?.id;
+
+  const [result, categories, tags] = await Promise.all([
     searchPosts({
       page,
       pageSize: 10,
       keyword,
-      categoryId,
-      tagId,
     }),
-    listCategories(),
-    listTags(),
-    auth(),
+    uid ? listCategories(uid) : Promise.resolve([]),
+    uid ? listTags(uid) : Promise.resolve([]),
   ]);
 
   const buildQuery = (overrides: Record<string, string | undefined>) => {
     const p = new URLSearchParams();
     if (keyword) p.set("keyword", keyword);
-    if (categoryId) p.set("categoryId", categoryId);
-    if (tagId) p.set("tagId", tagId);
     Object.entries(overrides).forEach(([k, v]) => {
       if (v === undefined || v === "") p.delete(k);
       else p.set(k, v);
@@ -60,58 +54,30 @@ export async function PostIndex({
         method="get"
         action={path}
       >
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
           <span className="text-zinc-500">关键词</span>
           <input
             name="keyword"
             defaultValue={keyword ?? ""}
             placeholder="搜索标题或正文"
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
+            className="h-10 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
           />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-zinc-500">分类</span>
-          <select
-            name="categoryId"
-            defaultValue={categoryId ?? ""}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
-          >
-            <option value="">全部</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-zinc-500">标签</span>
-          <select
-            name="tagId"
-            defaultValue={tagId ?? ""}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
-          >
-            <option value="">全部</option>
-            {tags.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
         </label>
         <button
           type="submit"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+          className="h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
         >
-          筛选
+          搜索
         </button>
       </form>
 
-      <TaxonomyManageSection
-        categories={categories.map((c) => ({ id: c.id, name: c.name }))}
-        tags={tags.map((t) => ({ id: t.id, name: t.name }))}
-        canManage={!!session?.user}
-      />
+      {uid ? (
+        <TaxonomyManageSection
+          categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+          tags={tags.map((t) => ({ id: t.id, name: t.name }))}
+          canManage
+        />
+      ) : null}
 
       {result.posts.length === 0 ? (
         <p className="text-center text-zinc-500">暂无文章</p>

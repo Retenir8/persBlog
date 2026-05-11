@@ -16,7 +16,7 @@ export default async function HomePage({
         <div>
           <h1 className="text-3xl font-bold tracking-tight">最新文章</h1>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            阅读、写作与留言。
+            查看大家发布的动态；登录后可管理自己的分类、标签、音乐与摄影。
           </p>
         </div>
         <Link

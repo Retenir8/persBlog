@@ -3,15 +3,18 @@ import { prisma } from "@/lib/db";
 import { fetchNeteaseDisplayMeta } from "@/lib/neteaseMeta";
 import { parseNeteaseUrl } from "@/lib/netease";
 
-export async function listMusicItems(): Promise<MusicItem[]> {
+export async function listMusicItems(userId: string): Promise<MusicItem[]> {
   return prisma.musicItem.findMany({
+    where: { userId },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
   });
 }
 
 /** 为缺少封面或标题的旧数据补全元数据（仅服务端调用） */
-export async function listMusicItemsEnsuringMeta(): Promise<MusicItem[]> {
-  const items = await listMusicItems();
+export async function listMusicItemsEnsuringMeta(
+  userId: string
+): Promise<MusicItem[]> {
+  const items = await listMusicItems(userId);
   for (const item of items) {
     if (item.coverUrl && item.trackTitle) continue;
     const meta = await fetchNeteaseDisplayMeta(item.kind, item.neteaseId);
@@ -24,12 +27,13 @@ export async function listMusicItemsEnsuringMeta(): Promise<MusicItem[]> {
       },
     });
   }
-  return listMusicItems();
+  return listMusicItems(userId);
 }
 
 export async function createMusicItemFromUrl(
   url: string,
-  note: string
+  note: string,
+  userId: string
 ): Promise<MusicItem> {
   const parsed = parseNeteaseUrl(url);
   if (!parsed) {
@@ -45,6 +49,7 @@ export async function createMusicItemFromUrl(
 
   return prisma.musicItem.create({
     data: {
+      userId,
       neteaseId: parsed.id,
       kind: parsed.kind,
       note: trimmedNote,
@@ -55,7 +60,9 @@ export async function createMusicItemFromUrl(
   });
 }
 
-export async function deleteMusicItem(id: string): Promise<void> {
+export async function deleteMusicItem(id: string, userId: string): Promise<void> {
+  const row = await prisma.musicItem.findUnique({ where: { id } });
+  if (!row || row.userId !== userId) throw new Error("Forbidden");
   await prisma.musicItem.delete({
     where: { id },
   });

@@ -7,17 +7,25 @@ import { savePhotoFile } from "@/lib/photoUpload";
 import { requireAuth } from "@/lib/auth-utils";
 
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const cat = url.searchParams.get("category");
-  const categoryId =
-    cat && cat !== "all" && cat !== "" ? cat : undefined;
-  const photos = await listPhotos(categoryId);
-  return NextResponse.json(photos);
+  try {
+    const user = await requireAuth();
+    const url = new URL(req.url);
+    const cat = url.searchParams.get("category");
+    const categoryId =
+      cat && cat !== "all" && cat !== "" ? cat : undefined;
+    const photos = await listPhotos(user.id, categoryId);
+    return NextResponse.json(photos);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return NextResponse.json({ error: "请先登录" }, { status: 401 });
+    }
+    return NextResponse.json({ error: "加载失败" }, { status: 400 });
+  }
 }
 
 export async function POST(req: Request) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
     const form = await req.formData();
     const file = form.get("file");
     if (!(file instanceof File) || !file.size) {
@@ -37,6 +45,7 @@ export async function POST(req: Request) {
 
     const { imageUrl } = await savePhotoFile(file);
     const photo = await createPhotoRecord({
+      userId: user.id,
       imageUrl,
       title,
       categoryId,

@@ -7,9 +7,9 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function DELETE(_req: Request, { params }: RouteContext) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
     const { id } = await params;
-    const row = await deletePhotoRecord(id);
+    const row = await deletePhotoRecord(id, user.id);
     if (!row) {
       return NextResponse.json({ error: "照片不存在" }, { status: 404 });
     }

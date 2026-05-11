@@ -7,13 +7,21 @@ import {
 import { requireAuth } from "@/lib/auth-utils";
 
 export async function GET() {
-  const items = await listMusicItems();
-  return NextResponse.json(items);
+  try {
+    const user = await requireAuth();
+    const items = await listMusicItems(user.id);
+    return NextResponse.json(items);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return NextResponse.json({ error: "请先登录" }, { status: 401 });
+    }
+    return NextResponse.json({ error: "加载失败" }, { status: 400 });
+  }
 }
 
 export async function POST(req: Request) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
     const body = await req.json();
     const url = typeof body.url === "string" ? body.url : "";
     const noteRaw = typeof body.note === "string" ? body.note.trim() : "";
@@ -23,7 +31,7 @@ export async function POST(req: Request) {
     if (!noteRaw) {
       return NextResponse.json({ error: "请填写歌名" }, { status: 400 });
     }
-    const item = await createMusicItemFromUrl(url, noteRaw);
+    const item = await createMusicItemFromUrl(url, noteRaw, user.id);
     return NextResponse.json(item, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "Unauthorized") {

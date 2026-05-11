@@ -25,6 +25,11 @@ model User {
   posts     Post[]
   comments  Comment[]
   likes     Like[]
+  categories Category[]
+  tagsOwned Tag[] @relation("UserTags")
+  musicItems MusicItem[]
+  photoCategories PhotoCategory[]
+  photos    Photo[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -35,15 +40,23 @@ enum Role {
 }
 
 model Category {
-  id    String @id @default(cuid())
-  name  String @unique
-  posts Post[]
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts  Post[]
+
+  @@unique([userId, name])
 }
 
 model Tag {
-  id    String @id @default(cuid())
-  name  String @unique
-  posts PostTag[]
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User      @relation("UserTags", fields: [userId], references: [id], onDelete: Cascade)
+  posts  PostTag[]
+
+  @@unique([userId, name])
 }
 
 model Post {
@@ -112,15 +125,21 @@ model MusicItem {
   artistName  String?
   sortOrder   Int         @default(0)
   createdAt   DateTime    @default(now())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([neteaseId, kind])
+  @@unique([userId, neteaseId, kind])
 }
 
 model PhotoCategory {
   id        String  @id @default(cuid())
-  name      String  @unique
+  name      String
   sortOrder Int     @default(0)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   photos    Photo[]
+
+  @@unique([userId, name])
 }
 
 model Photo {
@@ -131,4 +150,6 @@ model Photo {
   category   PhotoCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   sortOrder  Int            @default(0)
   createdAt  DateTime       @default(now())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

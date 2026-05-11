@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -55,6 +56,8 @@ function CommentItem({
 
   const displayName =
     node.user?.name || node.guestName || "访客";
+  const profileUserId = node.userId ?? node.user?.id ?? null;
+  const nameIsLink = Boolean(profileUserId);
 
   async function submitReply(e: React.FormEvent) {
     e.preventDefault();
@@ -111,7 +114,17 @@ function CommentItem({
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {displayName}{" "}
+          {nameIsLink ? (
+            <Link
+              href={`/users/${profileUserId}`}
+              className="hover:underline"
+              prefetch={false}
+            >
+              {displayName}
+            </Link>
+          ) : (
+            <span>{displayName}</span>
+          )}{" "}
           <span className="font-normal text-zinc-400">
             {formatTime(node.createdAt)}
           </span>

@@ -9,6 +9,10 @@ export default auth((req) => {
     pathname.startsWith("/myposts") ||
     pathname === "/posts/new" ||
     pathname.startsWith("/admin") ||
+    pathname.startsWith("/categories") ||
+    pathname.startsWith("/tags") ||
+    pathname.startsWith("/music") ||
+    pathname.startsWith("/photos") ||
     /^\/posts\/[^/]+\/edit$/.test(pathname);
 
   if (!needsLogin) {
@@ -34,5 +38,13 @@ export const config = {
     "/posts/new",
     "/posts/:id/edit",
     "/admin/:path*",
+    "/categories",
+    "/categories/:path*",
+    "/tags",
+    "/tags/:path*",
+    "/music",
+    "/music/:path*",
+    "/photos",
+    "/photos/:path*",
   ],
 };

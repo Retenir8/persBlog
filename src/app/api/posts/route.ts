@@ -9,8 +9,6 @@ export async function GET(req: NextRequest) {
   const result = await searchPosts({
     page,
     pageSize,
-    categoryId: searchParams.get("categoryId") || undefined,
-    tagId: searchParams.get("tagId") || undefined,
     keyword: searchParams.get("keyword") || undefined,
   });
   return NextResponse.json(result);

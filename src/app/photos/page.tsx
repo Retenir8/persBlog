@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { PhotoGalleryManage } from "@/components/photos/PhotoGalleryManage";
 import {
@@ -8,7 +9,7 @@ import {
 
 export const metadata: Metadata = {
   title: "摄影",
-  description: "相册与分类",
+  description: "我的相册与分类",
 };
 
 export default async function PhotosPage({
@@ -16,16 +17,20 @@ export default async function PhotosPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login?callbackUrl=/photos");
+  }
+
   const sp = await searchParams;
   const raw =
     typeof sp.category === "string" ? sp.category.trim() : "";
   const selectedCategoryId =
     raw === "" || raw === "all" ? null : raw;
 
-  const [categories, photos, session] = await Promise.all([
-    listPhotoCategories(),
-    listPhotos(selectedCategoryId ?? undefined),
-    auth(),
+  const [categories, photos] = await Promise.all([
+    listPhotoCategories(session.user.id),
+    listPhotos(session.user.id, selectedCategoryId ?? undefined),
   ]);
 
   const categoryRows = categories.map((c) => ({
@@ -48,9 +53,9 @@ export default async function PhotosPage({
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">摄影</h1>
+        <h1 className="text-3xl font-bold tracking-tight">我的摄影</h1>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          按分类浏览照片；登录后可上传图片并管理分类。
+          仅自己可见与管理；按分类浏览与上传照片。
         </p>
       </div>
 
@@ -58,7 +63,7 @@ export default async function PhotosPage({
         key={selectedCategoryId ?? "all"}
         categories={categoryRows}
         photos={photoRows}
-        canManage={!!session?.user}
+        canManage
         selectedCategoryId={selectedCategoryId}
       />
     </div>

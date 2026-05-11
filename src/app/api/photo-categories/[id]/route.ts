@@ -10,13 +10,13 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: Request, { params }: RouteContext) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
     const { id } = await params;
     const body = await req.json();
     if (typeof body?.name !== "string") {
       return NextResponse.json({ error: "请填写名称" }, { status: 400 });
     }
-    const cat = await updatePhotoCategory(id, body.name);
+    const cat = await updatePhotoCategory(id, body.name, user.id);
     return NextResponse.json(cat);
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "Unauthorized") {
@@ -35,9 +35,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 
 export async function DELETE(_req: Request, { params }: RouteContext) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
     const { id } = await params;
-    await deletePhotoCategory(id);
+    await deletePhotoCategory(id, user.id);
     return NextResponse.json({ ok: true });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "Unauthorized") {

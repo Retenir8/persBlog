@@ -20,11 +20,7 @@ export default async function EditPostPage({
     redirect("/login");
   }
 
-  const [post, categories, tags] = await Promise.all([
-    getPostById(id),
-    listCategories(),
-    listTags(),
-  ]);
+  const post = await getPostById(id);
 
   if (!post) {
     notFound();
@@ -32,6 +28,16 @@ export default async function EditPostPage({
   if (post.authorId !== session.user.id && session.user.role !== "ADMIN") {
     redirect("/");
   }
+
+  const taxonomyUserId =
+    session.user.role === "ADMIN" && post.authorId !== session.user.id
+      ? post.authorId
+      : session.user.id;
+
+  const [categories, tags] = await Promise.all([
+    listCategories(taxonomyUserId),
+    listTags(taxonomyUserId),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">

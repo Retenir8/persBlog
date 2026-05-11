@@ -4,17 +4,14 @@ import { prisma } from "../db";
 export interface SearchParams {
   page: number;
   pageSize: number;
-  categoryId?: string;
-  tagId?: string;
   keyword?: string;
 }
 
+/** 朋友圈动态：仅展示已发布文章；分类/标签为各人私有，不在全站时间线筛选 */
 export async function searchPosts(params: SearchParams) {
-  const { page, pageSize, categoryId, tagId, keyword } = params;
+  const { page, pageSize, keyword } = params;
   const where: Prisma.PostWhereInput = { published: true };
 
-  if (categoryId) where.categoryId = categoryId;
-  if (tagId) where.tags = { some: { tagId } };
   if (keyword) {
     where.OR = [
       { title: { contains: keyword, mode: "insensitive" } },
@@ -72,6 +69,23 @@ export async function canViewPost(
   return false;
 }
 
+async function ensureTaxonomyOwnedByAuthor(
+  authorId: string,
+  categoryId: string | null | undefined,
+  tagIds: string[] | undefined
+) {
+  if (categoryId) {
+    const c = await prisma.category.findUnique({ where: { id: categoryId } });
+    if (!c || c.userId !== authorId) throw new Error("无效的分类");
+  }
+  if (tagIds && tagIds.length > 0) {
+    const n = await prisma.tag.count({
+      where: { id: { in: tagIds }, userId: authorId },
+    });
+    if (n !== tagIds.length) throw new Error("无效的标签");
+  }
+}
+
 export async function createPost(
   authorId: string,
   data: {
@@ -82,6 +96,11 @@ export async function createPost(
     published?: boolean;
   }
 ) {
+  await ensureTaxonomyOwnedByAuthor(
+    authorId,
+    data.categoryId ?? null,
+    data.tagIds
+  );
   return prisma.post.create({
     data: {
       title: data.title,
@@ -113,6 +132,18 @@ export async function updatePost(
   if (post.authorId !== userId && userRole !== "ADMIN") {
     throw new Error("Forbidden");
   }
+
+  const ownerId = post.authorId;
+  const nextCategoryId =
+    data.categoryId !== undefined ? data.categoryId : post.categoryId;
+  let nextTagIds: string[];
+  if (data.tagIds !== undefined) {
+    nextTagIds = data.tagIds;
+  } else {
+    const rows = await prisma.postTag.findMany({ where: { postId } });
+    nextTagIds = rows.map((r) => r.tagId);
+  }
+  await ensureTaxonomyOwnedByAuthor(ownerId, nextCategoryId ?? null, nextTagIds);
 
   if (data.tagIds) {
     await prisma.postTag.deleteMany({ where: { postId } });

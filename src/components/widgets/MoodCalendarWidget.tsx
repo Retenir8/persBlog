@@ -103,7 +103,7 @@ export function MoodCalendarWidget({
 
   return (
     <div
-      className={`rounded-xl border border-zinc-900 bg-white p-2 text-zinc-900 dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-50 sm:p-3 ${rootH}`}
+      className={`w-full min-w-0 rounded-xl border border-zinc-900 bg-white p-2 text-zinc-900 dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-50 sm:p-3 ${rootH}`}
     >
       <div className="mb-2 flex shrink-0 items-center justify-between gap-1">
         <button

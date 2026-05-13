@@ -76,7 +76,7 @@ export function MusicPlayerWidget({ compact }: { compact?: boolean }) {
     if (compact) {
       return (
         <div
-          className={`${base} flex flex-col justify-between p-2 sm:p-3 ${TRIO_WIDGET_MIN_HEIGHT_CLASS}`}
+          className={`${base} flex w-full min-w-0 flex-col justify-between p-2 sm:p-3 ${TRIO_WIDGET_MIN_HEIGHT_CLASS}`}
         >
           {children}
         </div>

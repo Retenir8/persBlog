@@ -39,7 +39,7 @@ export function DigitalClockWidget({ compact }: { compact?: boolean }) {
 
   return (
     <div
-      className={`rounded-xl border border-zinc-900 bg-white text-center dark:border-zinc-100 dark:bg-zinc-950 ${
+      className={`w-full min-w-0 rounded-xl border border-zinc-900 bg-white text-center dark:border-zinc-100 dark:bg-zinc-950 ${
         compact
           ? `flex flex-col justify-center ${TRIO_WIDGET_MIN_HEIGHT_CLASS} px-2 py-3`
           : "p-6"

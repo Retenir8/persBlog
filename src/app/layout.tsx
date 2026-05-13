@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
+import { ChefCatPet } from "@/components/pet/ChefCatPet";
 import { Providers } from "@/components/providers";
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default function RootLayout({
           <footer className="border-t border-zinc-200 py-6 text-center text-xs text-zinc-500 dark:border-zinc-800">
             个人博客 · Next.js + Prisma
           </footer>
+          <ChefCatPet />
         </Providers>
       </body>
     </html>

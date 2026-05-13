@@ -17,14 +17,14 @@ export const WIDGET_REGISTRY: readonly WidgetDefinition[] = [
       "月历中点击日期，用格子背景色记录心情（愤怒红、悲伤蓝、平静绿、开心黄），数据保存在你的账号中。",
   },
   {
-    key: "music-player",
-    title: "音乐播放器",
-    description: "播放你在「音乐」页收藏的第一首单曲；若无单曲则引导去音乐页添加。",
-  },
-  {
     key: "zen-quote",
     title: "一言卡片",
     description: "在「我的博客」里可自定义一句话；留空则使用内置默认文案。",
+  },
+  {
+    key: "music-player",
+    title: "音乐播放器",
+    description: "播放你在「音乐」页收藏的第一首单曲；若无单曲则引导去音乐页添加。",
   },
 ] as const;
 

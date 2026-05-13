@@ -47,21 +47,21 @@ export function DigitalClockWidget({ compact }: { compact?: boolean }) {
     >
       <p
         className={`font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400 ${
-          compact ? "text-[9px]" : "text-xs"
+          compact ? "text-[10px]" : "text-xs"
         }`}
       >
         当前时间
       </p>
       <p
         className={`mt-1 font-mono font-semibold tabular-nums text-zinc-900 dark:text-zinc-50 ${
-          compact ? "text-lg sm:text-xl" : "text-3xl"
+          compact ? "text-2xl sm:text-3xl" : "text-3xl"
         }`}
       >
         {time}
       </p>
       <p
         className={`mt-1 text-zinc-600 dark:text-zinc-400 ${
-          compact ? "text-[10px] leading-tight" : "text-sm"
+          compact ? "text-xs leading-snug" : "text-sm"
         }`}
       >
         {date}

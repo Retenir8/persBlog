@@ -9,7 +9,7 @@ import {
 export default async function NewPostPage() {
   const session = await auth();
   if (!session?.user) {
-    redirect("/login");
+    redirect("/login?callbackUrl=" + encodeURIComponent("/posts/new"));
   }
 
   const [categories, tags] = await Promise.all([

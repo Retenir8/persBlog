@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/Button";
 import { NavArticleMenu } from "@/components/layout/NavArticleMenu";
+import { NavWidgetMenu } from "@/components/layout/NavWidgetMenu";
 
 async function SignOutForm() {
   return (
@@ -31,6 +32,7 @@ export async function Navbar() {
           个人博客
         </Link>
         <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <NavWidgetMenu />
           <Link
             href="/guestbook"
             className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"

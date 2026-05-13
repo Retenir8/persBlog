@@ -29,7 +29,7 @@ export default function RegisterPage() {
         setError(data.error || "注册失败");
         return;
       }
-      router.push("/login");
+      router.push("/login?callbackUrl=" + encodeURIComponent("/myposts"));
     } finally {
       setBusy(false);
     }

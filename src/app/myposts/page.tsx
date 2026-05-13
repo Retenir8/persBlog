@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getMyPosts } from "@/lib/services/postService";
+import { getUserWidgetFields } from "@/lib/services/userWidgetSql";
+import { ProfileWidgetsSection } from "@/components/widgets/ProfileWidgetsSection";
 import { MyPostsActions } from "./PostsActions";
 
 function first(v: string | string[] | undefined) {
@@ -16,13 +18,17 @@ export default async function MyPostsPage({
 }) {
   const session = await auth();
   if (!session?.user) {
-    redirect("/login");
+    redirect("/login?callbackUrl=" + encodeURIComponent("/myposts"));
   }
 
   const sp = await searchParams;
   const page = Math.max(1, parseInt(String(first(sp.page) || "1"), 10));
-  const { posts, total, pageSize } = await getMyPosts(session.user.id, page, 10);
+  const [{ posts, total, pageSize }, meRow] = await Promise.all([
+    getMyPosts(session.user.id, page, 10),
+    getUserWidgetFields(session.user.id),
+  ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const widgetKeys = meRow?.profileWidgets ?? [];
 
   return (
     <div className="space-y-8">
@@ -40,6 +46,14 @@ export default async function MyPostsPage({
           新建文章
         </Link>
       </div>
+
+      <ProfileWidgetsSection
+        widgetKeys={widgetKeys}
+        userId={session.user.id}
+        isOwner
+        zenQuoteText={meRow?.zenQuoteText ?? null}
+        moodCalendarData={meRow?.moodCalendarData}
+      />
 
       {posts.length === 0 ? (
         <p className="text-zinc-500">还没有文章，去写一篇吧。</p>

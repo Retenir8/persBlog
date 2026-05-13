@@ -33,6 +33,12 @@ model User {
   photos    Photo[]
   guestbookReceived GuestbookEntry[] @relation("GuestbookHost")
   guestbookWritten  GuestbookEntry[] @relation("GuestbookAuthor")
+  /// 已启用的小组件键，顺序即展示顺序
+  profileWidgets    String[]          @default([])
+  /// 一言卡片自定义文案；为空则使用内置默认句
+  zenQuoteText      String?
+  /// 心情日历：日期 YYYY-MM-DD → 短文案（JSON 对象）
+  moodCalendarData  Json              @default("{}")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }

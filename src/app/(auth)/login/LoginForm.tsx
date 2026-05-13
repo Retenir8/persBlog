@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/Input";
 
 export default function LoginForm() {
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/";
+  /** 登录后的个人主页：我的文章，后续可在此挂载日历、播放器等小组件 */
+  const callbackUrl = params.get("callbackUrl") || "/myposts";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

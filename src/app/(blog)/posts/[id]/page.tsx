@@ -97,7 +97,7 @@ export default async function PostDetailPage({
       </header>
 
       <div
-        className="post-content py-8"
+        className="post-content mx-auto max-w-[65ch] py-8"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 

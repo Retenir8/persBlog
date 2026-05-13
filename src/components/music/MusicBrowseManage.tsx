@@ -125,6 +125,9 @@ export function MusicBrowseManage({
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://music.163.com/song?id=…"
               />
+              <span className="text-xs leading-snug text-zinc-500 dark:text-zinc-400">
+                仅网页版链接可用
+              </span>
             </label>
             <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
               <span className="text-zinc-500">歌名</span>

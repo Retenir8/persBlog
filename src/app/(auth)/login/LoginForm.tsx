@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { PET_LOGIN_TIP_SESSION_KEY } from "@/lib/petLoginTip";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -30,6 +31,11 @@ export default function LoginForm() {
       if (res?.error) {
         setError("邮箱或密码错误");
         return;
+      }
+      try {
+        sessionStorage.setItem(PET_LOGIN_TIP_SESSION_KEY, "1");
+      } catch {
+        /* 无痕 / 禁用 storage 时忽略 */
       }
       window.location.href = callbackUrl;
     } finally {

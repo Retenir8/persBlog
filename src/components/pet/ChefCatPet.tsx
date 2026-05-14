@@ -1,6 +1,8 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PET_LOGIN_TIP_SESSION_KEY } from "@/lib/petLoginTip";
 import { PetAskPanel } from "./PetAskPanel";
 import { PetContextMenu } from "./PetContextMenu";
 import "./pet-animations.css";
@@ -16,8 +18,14 @@ const SHAKE_HARD_CAP_MS = 30_000;
 const INITIAL_EDGE_PX = 24;
 const VIEWPORT_PAD_PX = 8;
 const DRAG_THRESHOLD_PX = 8;
+const LOGIN_TIP_AUTO_DISMISS_MS = 12_000;
+
+const LOGIN_TIP_TEXT =
+  "左键点击我与我互动，右键点击我有更多功能哦。";
 
 export function ChefCatPet() {
+  const { status } = useSession();
+  const [postLoginTipOpen, setPostLoginTipOpen] = useState(false);
   const [motion, setMotion] = useState<ChefCatPetMotion>("idle");
   const motionRef = useRef(motion);
   useEffect(() => {
@@ -214,6 +222,31 @@ export function ChefCatPet() {
     return () => window.removeEventListener("resize", onResize);
   }, [clampEdgeOffset]);
 
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    let show = false;
+    try {
+      if (sessionStorage.getItem(PET_LOGIN_TIP_SESSION_KEY) === "1") {
+        sessionStorage.removeItem(PET_LOGIN_TIP_SESSION_KEY);
+        show = true;
+      }
+    } catch {
+      /* 存储不可用时忽略 */
+    }
+    if (!show) return;
+    queueMicrotask(() => {
+      setPostLoginTipOpen(true);
+    });
+  }, [status]);
+
+  useEffect(() => {
+    if (!postLoginTipOpen) return;
+    const t = window.setTimeout(() => {
+      setPostLoginTipOpen(false);
+    }, LOGIN_TIP_AUTO_DISMISS_MS);
+    return () => window.clearTimeout(t);
+  }, [postLoginTipOpen]);
+
   const imgClass =
     motion === "jump"
       ? "chef-cat-pet__sprite chef-cat-pet__sprite--jump"
@@ -234,6 +267,26 @@ export function ChefCatPet() {
         }}
         aria-label="厨师猫虚拟宠物"
       >
+        {postLoginTipOpen ? (
+          <div
+            className="relative z-[1] mb-2 max-w-[min(18rem,calc(100vw-2rem))] rounded-2xl border border-zinc-200 bg-white px-3 py-2.5 pr-8 text-left text-xs leading-relaxed text-zinc-800 shadow-lg dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+            role="status"
+          >
+            <button
+              type="button"
+              className="absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+              aria-label="关闭提示"
+              onClick={() => setPostLoginTipOpen(false)}
+            >
+              ×
+            </button>
+            {LOGIN_TIP_TEXT}
+            <span
+              className="pointer-events-none absolute -bottom-1 left-1/2 size-2.5 -translate-x-1/2 rotate-45 border-b border-r border-zinc-200 bg-white dark:border-zinc-600 dark:bg-zinc-900"
+              aria-hidden
+            />
+          </div>
+        ) : null}
         <div
           className="chef-cat-pet__glow cursor-grab touch-none active:cursor-grabbing"
           onPointerDown={onCatPointerDown}

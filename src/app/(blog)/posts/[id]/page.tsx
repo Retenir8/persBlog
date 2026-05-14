@@ -11,6 +11,7 @@ import { serializeComments } from "@/lib/commentSerialize";
 import CommentSection from "@/components/comment/CommentSection";
 import { ViewCount } from "@/components/blog/ViewCount";
 import { LikeButton } from "@/components/blog/LikeButton";
+import { PetReadArticleButton } from "@/components/pet/PetReadArticleButton";
 
 export default async function PostDetailPage({
   params,
@@ -53,9 +54,15 @@ export default async function PostDetailPage({
   return (
     <article className="mx-auto max-w-3xl">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/posts" className={outlineLinkClassName}>
-          返回列表
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/posts" className={outlineLinkClassName}>
+            返回列表
+          </Link>
+          <PetReadArticleButton
+            postId={post.id}
+            isLoggedIn={Boolean(session?.user)}
+          />
+        </div>
         {canEdit && (
           <Link
             href={`/posts/${post.id}/edit`}

@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { PaginationNav } from "@/components/layout/PaginationNav";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 import { searchPosts } from "@/lib/services/postService";
 import { listCategories, listTags } from "@/lib/services/categoryTagService";
 import { PostCard } from "./PostCard";
@@ -50,25 +51,32 @@ export async function PostIndex({
   return (
     <div className="space-y-8">
       <form
-        className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:flex-row sm:flex-wrap sm:items-end"
+        className={`space-y-4 p-4 ${surfacePanelClass}`}
         method="get"
         action={path}
       >
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-          <span className="text-zinc-500">关键词</span>
-          <input
-            name="keyword"
-            defaultValue={keyword ?? ""}
-            placeholder="搜索标题或正文"
-            className="h-10 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
-          />
-        </label>
-        <button
-          type="submit"
-          className="h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
-        >
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           搜索
-        </button>
+        </h2>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <label className="flex min-w-0 flex-1 flex-col gap-1">
+            <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              关键词
+            </span>
+            <input
+              name="keyword"
+              defaultValue={keyword ?? ""}
+              placeholder="搜索标题或正文"
+              className="h-10 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+            />
+          </label>
+          <button
+            type="submit"
+            className="h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+          >
+            搜索
+          </button>
+        </div>
       </form>
 
       {uid ? (
@@ -80,7 +88,11 @@ export async function PostIndex({
       ) : null}
 
       {result.posts.length === 0 ? (
-        <p className="text-center text-zinc-500">暂无文章</p>
+        <div
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+        >
+          暂无文章
+        </div>
       ) : (
         <ul className="space-y-4">
           {result.posts.map((post) => (
@@ -91,29 +103,11 @@ export async function PostIndex({
         </ul>
       )}
 
-      {totalPages > 1 && (
-        <nav className="flex justify-center gap-2 text-sm">
-          {page > 1 && (
-            <Link
-              href={withQuery(buildQuery({ page: String(page - 1) }))}
-              className="rounded-lg border border-zinc-300 px-3 py-1 dark:border-zinc-600"
-            >
-              上一页
-            </Link>
-          )}
-          <span className="px-2 py-1 text-zinc-500">
-            {page} / {totalPages}
-          </span>
-          {page < totalPages && (
-            <Link
-              href={withQuery(buildQuery({ page: String(page + 1) }))}
-              className="rounded-lg border border-zinc-300 px-3 py-1 dark:border-zinc-600"
-            >
-              下一页
-            </Link>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        hrefBuilder={(p) => withQuery(buildQuery({ page: String(p) }))}
+      />
     </div>
   );
 }

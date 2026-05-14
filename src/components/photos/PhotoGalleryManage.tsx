@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export type PhotoCategoryRow = {
   id: string;
@@ -225,7 +226,7 @@ export function PhotoGalleryManage({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap gap-2">
+      <div className={`flex flex-wrap gap-2 p-3 ${surfacePanelClass}`}>
         <Link
           href="/photos"
           className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${tabClass(
@@ -249,13 +250,15 @@ export function PhotoGalleryManage({
 
       {canManage && (
         <>
-          <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-            <p className="mb-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               管理分类
-            </p>
+            </h2>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-                <span className="text-zinc-500">新分类名称</span>
+              <label className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  新分类名称
+                </span>
                 <Input
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
@@ -336,13 +339,15 @@ export function PhotoGalleryManage({
             ) : null}
           </div>
 
-          <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-            <p className="mb-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               上传照片
-            </p>
+            </h2>
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="text-zinc-500">选择文件</span>
+              <label className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  选择文件
+                </span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/gif,image/webp"
@@ -352,16 +357,20 @@ export function PhotoGalleryManage({
                   }
                 />
               </label>
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="text-zinc-500">标题（可选）</span>
+              <label className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  标题（可选）
+                </span>
                 <Input
                   value={uploadTitle}
                   onChange={(e) => setUploadTitle(e.target.value)}
                   placeholder="简短说明"
                 />
               </label>
-              <label className="flex flex-col gap-1 text-sm sm:col-span-2">
-                <span className="text-zinc-500">归类</span>
+              <label className="flex flex-col gap-1 sm:col-span-2">
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  归类
+                </span>
                 <select
                   value={uploadCategoryId}
                   onChange={(e) => setUploadCategoryId(e.target.value)}

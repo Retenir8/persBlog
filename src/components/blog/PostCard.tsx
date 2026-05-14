@@ -19,7 +19,7 @@ export function PostCard({ post }: { post: PostWithRelations }) {
   }).format(new Date(post.createdAt));
 
   return (
-    <article className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
+    <article className="rounded-2xl border border-zinc-200/70 bg-white p-5 shadow-[var(--shadow-surface)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-zinc-300/80 hover:shadow-[var(--shadow-surface-hover)] dark:border-zinc-800/70 dark:bg-zinc-950 dark:hover:border-zinc-700/80">
       <Link href={`/posts/${post.id}`}>
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
           {post.title}

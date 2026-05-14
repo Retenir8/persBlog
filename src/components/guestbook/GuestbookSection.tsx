@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export type GuestbookEntryDTO = {
   id: string;
@@ -121,10 +122,12 @@ export function GuestbookSection({
   const titleName = hostDisplayName?.trim() || "TA";
 
   return (
-    <section className="mt-12 space-y-6 border-t border-zinc-200 pt-10 dark:border-zinc-800">
+    <section className={`mt-12 space-y-6 p-5 sm:p-6 ${surfacePanelClass}`}>
       <div>
-        <h2 className="text-xl font-bold tracking-tight">留言板</h2>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          留言板
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
           给 {titleName} 留下一段话；全站
           <Link href="/guestbook" className="mx-1 text-blue-600 hover:underline dark:text-blue-400">
             留言广场
@@ -134,7 +137,10 @@ export function GuestbookSection({
       </div>
 
       {!isOwnWall ? (
-        <form onSubmit={submit} className="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-900/40">
+        <form
+          onSubmit={submit}
+          className={`space-y-3 p-4 ${surfacePanelClass}`}
+        >
           {error ? (
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           ) : null}
@@ -164,7 +170,9 @@ export function GuestbookSection({
           </Button>
         </form>
       ) : (
-        <p className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900/30 dark:text-zinc-400">
+        <p
+          className={`px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 ${surfacePanelClass}`}
+        >
           这是你的主页，访客可以在这里给你留言；请切换到其他用户主页体验留言，或在留言广场查看全站动态。
         </p>
       )}
@@ -179,10 +187,10 @@ export function GuestbookSection({
             const authorLinkId = entry.authorUserId ?? entry.author?.id ?? null;
 
             return (
-              <li
-                key={entry.id}
-                className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
-              >
+          <li
+            key={entry.id}
+            className={`p-4 ${surfacePanelClass}`}
+          >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                     {authorLinkId ? (

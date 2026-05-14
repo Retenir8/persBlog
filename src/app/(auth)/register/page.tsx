@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { PageIntro } from "@/components/layout/PageIntro";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -37,10 +39,10 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-md space-y-6">
-      <h1 className="text-center text-2xl font-bold">注册</h1>
+      <PageIntro title="注册" />
       <form
         onSubmit={onSubmit}
-        className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
+        className={`space-y-4 p-6 ${surfacePanelClass}`}
       >
         <label className="block text-sm font-medium">
           昵称（可选）

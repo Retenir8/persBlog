@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export type CommentNode = {
   id: string;
@@ -249,8 +250,10 @@ export default function CommentSection({
   const writingDisabled = status === "loading";
 
   return (
-    <section className="mt-10 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-      <h2 className="text-lg font-semibold">评论</h2>
+    <section className={`mt-8 space-y-6 p-5 sm:p-6 ${surfacePanelClass}`}>
+      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        评论
+      </h2>
 
       {canWrite && !writingDisabled && (
         <form onSubmit={submit} className="mt-4 space-y-3">

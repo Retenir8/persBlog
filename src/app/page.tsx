@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { PostIndex } from "@/components/blog/PostIndex";
+import { PageIntro } from "@/components/layout/PageIntro";
+import { pagePrimaryCtaClassName } from "@/lib/surfaceStyles";
 
 export default async function HomePage({
   searchParams,
@@ -12,20 +14,15 @@ export default async function HomePage({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">最新文章</h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            查看大家发布的动态；登录后可管理自己的分类、标签、音乐与摄影。
-          </p>
-        </div>
-        <Link
-          href="/posts/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
-        >
-          发布文章
-        </Link>
-      </div>
+      <PageIntro
+        title="最新文章"
+        description="查看大家发布的动态；登录后可管理自己的分类、标签、音乐与摄影。"
+        action={
+          <Link href="/posts/new" className={pagePrimaryCtaClassName}>
+            发布文章
+          </Link>
+        }
+      />
 
       <PostIndex searchParams={sp} path="/" />
     </div>

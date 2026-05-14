@@ -6,6 +6,7 @@ import {
   listPhotoCategories,
   listPhotos,
 } from "@/lib/services/photoService";
+import { PageIntro } from "@/components/layout/PageIntro";
 
 export const metadata: Metadata = {
   title: "摄影",
@@ -52,12 +53,10 @@ export default async function PhotosPage({
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">我的摄影</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          仅自己可见与管理；按分类浏览与上传照片。
-        </p>
-      </div>
+      <PageIntro
+        title="我的摄影"
+        description="仅自己可见与管理；按分类浏览与上传照片。"
+      />
 
       <PhotoGalleryManage
         key={selectedCategoryId ?? "all"}

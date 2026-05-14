@@ -5,6 +5,7 @@ import {
   listCategories,
   listTags,
 } from "@/lib/services/categoryTagService";
+import { PageIntro } from "@/components/layout/PageIntro";
 
 export default async function NewPostPage() {
   const session = await auth();
@@ -19,7 +20,7 @@ export default async function NewPostPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">写文章</h1>
+      <PageIntro title="写文章" />
       <PostEditorForm categories={categories} tags={tags} />
     </div>
   );

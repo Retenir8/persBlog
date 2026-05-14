@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { User, Post } from "@/generated/prisma";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 interface UserWithPosts extends User {
   posts: Post[];
@@ -110,6 +111,7 @@ export function ProfileEditorClient({
         </div>
       )}
 
+      <div className={`space-y-8 p-5 sm:p-6 ${surfacePanelClass}`}>
       {/* Header */}
       <div className="text-center">
         <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
@@ -252,6 +254,7 @@ export function ProfileEditorClient({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import type { Category, Post, Tag } from "@/generated/prisma";
 import Editor from "@/components/blog/Editor";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 type PostTagRow = { tagId: string; tag: Tag };
 
@@ -108,7 +109,8 @@ export default function PostEditorForm({
       onSubmit={(e) => e.preventDefault()}
       className="mx-auto max-w-3xl space-y-6"
     >
-      <label className="block text-sm font-medium">
+      <div className={`space-y-6 p-6 ${surfacePanelClass}`}>
+        <label className="block text-sm font-medium">
         标题
         <Input
           className="mt-1"
@@ -224,6 +226,7 @@ export default function PostEditorForm({
         >
           {busy ? "保存中…" : "保存为草稿"}
         </Button>
+      </div>
       </div>
     </form>
   );

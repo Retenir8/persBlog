@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { listAllPostsForAdmin } from "@/lib/services/postService";
 import { AdminPostDelete } from "./AdminPostDelete";
+import { PageIntro } from "@/components/layout/PageIntro";
+import { PaginationNav } from "@/components/layout/PaginationNav";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 function first(v: string | string[] | undefined) {
   if (Array.isArray(v)) return v[0];
@@ -26,17 +29,19 @@ export default async function AdminPage({
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">管理后台 · 全部文章</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          共 {total} 篇 · 可对任意文章删除。普通用户需在「我的博客」管理自己的稿件。
-        </p>
-      </div>
+      <PageIntro
+        title="管理后台 · 全部文章"
+        description={`共 ${total} 篇 · 可对任意文章删除。普通用户需在「我的博客」管理自己的稿件。`}
+      />
 
       {posts.length === 0 ? (
-        <p>暂无文章</p>
+        <div
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+        >
+          暂无文章
+        </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className={`overflow-x-auto ${surfacePanelClass}`}>
           <table className="w-full min-w-[680px] text-left text-sm">
             <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
               <tr>
@@ -81,27 +86,11 @@ export default async function AdminPage({
         </div>
       )}
 
-      {totalPages > 1 && (
-        <nav className="flex justify-center gap-4 text-sm">
-          {page > 1 && (
-            <Link
-              href={`/admin?page=${page - 1}`}
-              className="rounded-lg border border-zinc-300 px-3 py-1 dark:border-zinc-600"
-            >
-              上一页
-            </Link>
-          )}
-          <span>{page} / {totalPages}</span>
-          {page < totalPages && (
-            <Link
-              href={`/admin?page=${page + 1}`}
-              className="rounded-lg border border-zinc-300 px-3 py-1 dark:border-zinc-600"
-            >
-              下一页
-            </Link>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        hrefBuilder={(p) => `/admin?page=${p}`}
+      />
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { getWidgetByKey } from "@/lib/widgets/registry";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { WidgetPreviewActions } from "./WidgetPreviewActions";
 import { getUserWidgetFields } from "@/lib/services/userWidgetSql";
+import { PageIntro } from "@/components/layout/PageIntro";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export default async function WidgetPreviewPage({
   params,
@@ -36,14 +38,11 @@ export default async function WidgetPreviewPage({
         >
           ← 返回首页
         </Link>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight">{meta.title}</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          {meta.description}
-        </p>
       </div>
+      <PageIntro title={meta.title} description={meta.description} />
 
       <div>
-        <p className="mb-3 text-xs font-medium uppercase tracking-wide text-zinc-500">
+        <p className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
           预览
         </p>
         <WidgetRenderer
@@ -56,7 +55,7 @@ export default async function WidgetPreviewPage({
         />
       </div>
 
-      <div className="rounded-lg border border-zinc-200 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-900/40">
+      <div className={`p-4 ${surfacePanelClass}`}>
         <WidgetPreviewActions
           widgetKey={key}
           userId={ownerId}

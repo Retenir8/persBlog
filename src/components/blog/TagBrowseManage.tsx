@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 type TagRow = {
   id: string;
@@ -106,26 +107,33 @@ export function TagBrowseManage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {canManage && (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-          <label className="flex flex-1 flex-col gap-1 text-sm">
-            <span className="text-zinc-500">新建标签</span>
-            <Input
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="输入名称后添加"
-            />
-          </label>
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={busy}
-            onClick={add}
-            className="shrink-0"
-          >
-            添加
-          </Button>
+        <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            新建标签
+          </h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <label className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                名称
+              </span>
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="输入名称后添加"
+              />
+            </label>
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={busy}
+              onClick={add}
+              className="shrink-0"
+            >
+              添加
+            </Button>
+          </div>
         </div>
       )}
       {error && (
@@ -136,7 +144,7 @@ export function TagBrowseManage({
         {tags.map((tag) => (
           <div
             key={tag.id}
-            className={`inline-flex max-w-full flex-wrap items-center gap-1 rounded-full border border-zinc-200 py-1 pl-3 pr-1 dark:border-zinc-700 ${getTagSize(tag._count.posts)}`}
+            className={`inline-flex max-w-full flex-wrap items-center gap-1 rounded-full border border-zinc-200/80 bg-white py-1 pl-3 pr-1 shadow-[var(--shadow-surface)] dark:border-zinc-700/80 dark:bg-zinc-950 ${getTagSize(tag._count.posts)}`}
           >
             {editingId === tag.id ? (
               <span className="flex flex-wrap items-center gap-1 py-0.5">

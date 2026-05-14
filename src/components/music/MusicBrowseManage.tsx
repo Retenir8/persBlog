@@ -7,6 +7,7 @@ import { SongAudioPlayer } from "@/components/music/SongAudioPlayer";
 import { Button, outlineLinkClassName } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { neteasePlayerEmbedSrc } from "@/lib/netease";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export type MusicItemRow = {
   id: string;
@@ -113,24 +114,35 @@ export function MusicBrowseManage({
   return (
     <div className="space-y-8">
       {canManage && (
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-          <p className="mb-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+        <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             添加网易云音乐
-          </p>
+          </h2>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-              <span className="text-zinc-500">链接</span>
-              <Input
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://music.163.com/song?id=…"
-              />
-              <span className="text-xs leading-snug text-zinc-500 dark:text-zinc-400">
-                仅网页版链接可用
+            <label className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                链接
               </span>
+              <div className="relative min-w-0">
+                <Input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://music.163.com/song?id=…"
+                  className="pr-[9.5rem]"
+                  aria-describedby="netease-url-hint"
+                />
+                <span
+                  id="netease-url-hint"
+                  className="pointer-events-none absolute inset-y-0 right-2 flex items-center whitespace-nowrap text-xs text-zinc-400 select-none dark:text-zinc-500"
+                >
+                  仅网页版链接可用
+                </span>
+              </div>
             </label>
-            <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-              <span className="text-zinc-500">歌名</span>
+            <label className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                歌名
+              </span>
               <Input
                 value={songName}
                 onChange={(e) => setSongName(e.target.value)}
@@ -158,11 +170,13 @@ export function MusicBrowseManage({
       )}
 
       {items.length === 0 ? (
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <div
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+        >
           {canManage
             ? "还没有添加音乐，在上方粘贴网易云链接即可。"
             : "暂无音乐，登录后可添加。"}
-        </p>
+        </div>
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {items.map((item) => {
@@ -181,7 +195,7 @@ export function MusicBrowseManage({
             return (
               <li
                 key={item.id}
-                className="flex flex-col overflow-visible rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
+                className="flex flex-col overflow-visible rounded-2xl border border-zinc-200/70 bg-white shadow-[var(--shadow-surface)] dark:border-zinc-800/70 dark:bg-zinc-950"
               >
                 <div className="relative">
                   <CoverBlock

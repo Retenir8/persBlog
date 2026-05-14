@@ -12,6 +12,7 @@ import CommentSection from "@/components/comment/CommentSection";
 import { ViewCount } from "@/components/blog/ViewCount";
 import { LikeButton } from "@/components/blog/LikeButton";
 import { PetReadArticleButton } from "@/components/pet/PetReadArticleButton";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export default async function PostDetailPage({
   params,
@@ -52,56 +53,60 @@ export default async function PostDetailPage({
   });
 
   return (
-    <article className="mx-auto max-w-3xl">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <Link href="/posts" className={outlineLinkClassName}>
-            返回列表
-          </Link>
-          <PetReadArticleButton
-            postId={post.id}
-            isLoggedIn={Boolean(session?.user)}
-          />
-        </div>
-        {canEdit && (
-          <Link
-            href={`/posts/${post.id}/edit`}
-            className={outlineLinkClassName}
-          >
-            编辑
-          </Link>
-        )}
-      </div>
-
-      <header className="border-b border-zinc-200 pb-6 dark:border-zinc-800">
-        {!post.published && (
-          <p className="mb-4 rounded-lg bg-amber-100 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-            草稿 · 仅作者与管理员可见
-          </p>
-        )}
-        <h1 className="text-3xl font-bold leading-tight">{post.title}</h1>
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-          <span>{post.author.name || "作者"}</span>
-          <time dateTime={post.createdAt.toISOString()}>
-            {dateFmt.format(post.createdAt)}
-          </time>
-          <ViewCount postId={post.id} initialCount={post.viewCount} isDetailPage={true} />
-          <LikeButton postId={post.id} initialCount={post.likeCount || 0} initialLiked={false} />
-          {post.category && (
-            <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-              {post.category.name}
-            </span>
-          )}
-          {post.tags.map((pt) => (
-            <span
-              key={pt.tagId}
-              className="rounded-full border border-zinc-200 px-2 py-0.5 dark:border-zinc-700"
+    <article className="mx-auto max-w-3xl space-y-8">
+      <div className={`p-5 sm:p-6 ${surfacePanelClass}`}>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/posts" className={outlineLinkClassName}>
+              返回列表
+            </Link>
+            <PetReadArticleButton
+              postId={post.id}
+              isLoggedIn={Boolean(session?.user)}
+            />
+          </div>
+          {canEdit && (
+            <Link
+              href={`/posts/${post.id}/edit`}
+              className={outlineLinkClassName}
             >
-              {pt.tag.name}
-            </span>
-          ))}
+              编辑
+            </Link>
+          )}
         </div>
-      </header>
+
+        <header>
+          {!post.published && (
+            <p className="mb-4 rounded-lg bg-amber-100 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+              草稿 · 仅作者与管理员可见
+            </p>
+          )}
+          <h1 className="text-3xl font-bold leading-tight text-zinc-900 dark:text-zinc-50">
+            {post.title}
+          </h1>
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+            <span>{post.author.name || "作者"}</span>
+            <time dateTime={post.createdAt.toISOString()}>
+              {dateFmt.format(post.createdAt)}
+            </time>
+            <ViewCount postId={post.id} initialCount={post.viewCount} isDetailPage={true} />
+            <LikeButton postId={post.id} initialCount={post.likeCount || 0} initialLiked={false} />
+            {post.category && (
+              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                {post.category.name}
+              </span>
+            )}
+            {post.tags.map((pt) => (
+              <span
+                key={pt.tagId}
+                className="rounded-full border border-zinc-200 px-2 py-0.5 dark:border-zinc-700"
+              >
+                {pt.tag.name}
+              </span>
+            ))}
+          </div>
+        </header>
+      </div>
 
       <div
         className="post-content mx-auto max-w-[65ch] py-8"

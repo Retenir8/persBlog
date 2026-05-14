@@ -1,4 +1,5 @@
 import { PostIndex } from "@/components/blog/PostIndex";
+import { PageIntro } from "@/components/layout/PageIntro";
 
 export default async function PostsPage({
   searchParams,
@@ -11,12 +12,11 @@ export default async function PostsPage({
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">全部文章</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          浏览大家发布的文章；分类与标签仅在个人后台使用，不在此筛选。
-        </p>
-      </div>
+      <PageIntro
+        title="全部文章"
+        description="浏览大家发布的文章；分类与标签仅在个人后台使用，不在此筛选。"
+      />
+
       <PostIndex searchParams={sp} path="/posts" />
     </div>
   );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 type Cat = {
   id: string;
@@ -100,26 +101,33 @@ export function CategoryBrowseManage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {canManage && (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-          <label className="flex flex-1 flex-col gap-1 text-sm">
-            <span className="text-zinc-500">新建分类</span>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="输入名称后添加"
-            />
-          </label>
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={busy}
-            onClick={add}
-            className="shrink-0"
-          >
-            添加
-          </Button>
+        <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            新建分类
+          </h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <label className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                名称
+              </span>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="输入名称后添加"
+              />
+            </label>
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={busy}
+              onClick={add}
+              className="shrink-0"
+            >
+              添加
+            </Button>
+          </div>
         </div>
       )}
       {error && (
@@ -130,7 +138,7 @@ export function CategoryBrowseManage({
         {categories.map((category) => (
           <div
             key={category.id}
-            className="group relative rounded-xl border border-zinc-200 bg-white transition-all hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+            className="group relative rounded-2xl border border-zinc-200/70 bg-white shadow-[var(--shadow-surface)] transition-[box-shadow,border-color] duration-300 hover:border-zinc-300/80 hover:shadow-[var(--shadow-surface-hover)] dark:border-zinc-800/70 dark:bg-zinc-950 dark:hover:border-zinc-700/80"
           >
             {editingId === category.id ? (
               <div className="p-6">

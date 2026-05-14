@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { MusicBrowseManage } from "@/components/music/MusicBrowseManage";
 import { listMusicItemsEnsuringMeta } from "@/lib/services/musicService";
+import { PageIntro } from "@/components/layout/PageIntro";
 
 export const metadata: Metadata = {
   title: "音乐",
@@ -31,12 +32,10 @@ export default async function MusicPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">我的音乐</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          仅自己可见与管理；单曲通过接口解析播放。
-        </p>
-      </div>
+      <PageIntro
+        title="我的音乐"
+        description="仅自己可见与管理；单曲通过接口解析播放。"
+      />
 
       <MusicBrowseManage items={rows} canManage />
     </div>

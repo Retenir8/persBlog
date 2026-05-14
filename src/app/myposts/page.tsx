@@ -5,6 +5,9 @@ import { getMyPosts } from "@/lib/services/postService";
 import { getUserWidgetFields } from "@/lib/services/userWidgetSql";
 import { ProfileWidgetsSection } from "@/components/widgets/ProfileWidgetsSection";
 import { MyPostsActions } from "./PostsActions";
+import { PageIntro } from "@/components/layout/PageIntro";
+import { PaginationNav } from "@/components/layout/PaginationNav";
+import { pagePrimaryCtaClassName, surfacePanelClass } from "@/lib/surfaceStyles";
 
 function first(v: string | string[] | undefined) {
   if (Array.isArray(v)) return v[0];
@@ -32,20 +35,15 @@ export default async function MyPostsPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">我的博客</h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            管理你已发布的文章与草稿。
-          </p>
-        </div>
-        <Link
-          href="/posts/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
-        >
-          新建文章
-        </Link>
-      </div>
+      <PageIntro
+        title="我的博客"
+        description="管理你已发布的文章与草稿。"
+        action={
+          <Link href="/posts/new" className={pagePrimaryCtaClassName}>
+            新建文章
+          </Link>
+        }
+      />
 
       <ProfileWidgetsSection
         widgetKeys={widgetKeys}
@@ -56,13 +54,17 @@ export default async function MyPostsPage({
       />
 
       {posts.length === 0 ? (
-        <p className="text-zinc-500">还没有文章，去写一篇吧。</p>
+        <div
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+        >
+          还没有文章，去写一篇吧。
+        </div>
       ) : (
         <ul className="space-y-4">
           {posts.map((post) => (
             <li
               key={post.id}
-              className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950"
+              className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between ${surfacePanelClass}`}
             >
               <div>
                 <Link
@@ -99,29 +101,11 @@ export default async function MyPostsPage({
         </ul>
       )}
 
-      {totalPages > 1 && (
-        <nav className="flex justify-center gap-4 text-sm">
-          {page > 1 && (
-            <Link
-              href={`/myposts?page=${page - 1}`}
-              className="rounded-lg border border-zinc-300 px-3 py-1 dark:border-zinc-600"
-            >
-              上一页
-            </Link>
-          )}
-          <span className="text-zinc-500">
-            {page} / {totalPages}
-          </span>
-          {page < totalPages && (
-            <Link
-              href={`/myposts?page=${page + 1}`}
-              className="rounded-lg border border-zinc-300 px-3 py-1 dark:border-zinc-600"
-            >
-              下一页
-            </Link>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        hrefBuilder={(p) => `/myposts?page=${p}`}
+      />
     </div>
   );
 }

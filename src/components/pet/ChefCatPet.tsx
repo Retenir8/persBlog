@@ -3,8 +3,10 @@
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PET_LOGIN_TIP_SESSION_KEY } from "@/lib/petLoginTip";
+import { loadPetVitality } from "@/lib/petVitality";
 import { PetAskPanel } from "./PetAskPanel";
 import { PetContextMenu } from "./PetContextMenu";
+import { PetFeedPanel } from "./PetFeedPanel";
 import "./pet-animations.css";
 
 /** 高兴摇头用透明 GIF（片源见 `public/pet/chef-cat-shake.gif`） */
@@ -42,6 +44,7 @@ export function ChefCatPet() {
     clientY: number;
   } | null>(null);
   const [askOpen, setAskOpen] = useState(false);
+  const [feedOpen, setFeedOpen] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hardCapRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -102,6 +105,13 @@ export function ChefCatPet() {
   useEffect(() => {
     playHappyRef.current = playHappy;
   }, [playHappy]);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      loadPetVitality();
+    }, 120_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (motion !== "happy") return;
@@ -330,10 +340,18 @@ export function ChefCatPet() {
           clientY={contextMenu.clientY}
           onDismiss={() => setContextMenu(null)}
           onAsk={() => setAskOpen(true)}
+          onFeed={() => setFeedOpen(true)}
         />
       ) : null}
 
       <PetAskPanel open={askOpen} onClose={() => setAskOpen(false)} />
+      <PetFeedPanel
+        open={feedOpen}
+        onClose={() => setFeedOpen(false)}
+        onFed={() => {
+          playHappyRef.current();
+        }}
+      />
     </>
   );
 }

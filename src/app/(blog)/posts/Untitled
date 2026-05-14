@@ -1,0 +1,8 @@
+PS C:\Users\许馨予\Desktop\persBlog> git pull origin main
+From https://github.com/Retenir8/persBlog
+ * branch            main       -> FETCH_HEAD
+Auto-merging src/app/(auth)/login/LoginForm.tsx
+Auto-merging src/app/(blog)/posts/[id]/page.tsx
+CONFLICT (content): Merge conflict in src/app/(blog)/posts/[id]/page.tsx
+Automatic merge failed; fix conflicts and then commit the result.
+PS C:\Users\许馨予\Desktop\persBlog>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfaceFieldClass, surfacePanelSubtleClass } from "@/lib/surfaceStyles";
 
 type Item = { id: string; name: string };
 
@@ -174,7 +174,7 @@ export function TaxonomyManageSection({
   }
 
   return (
-    <section className={`space-y-4 p-4 ${surfacePanelClass}`}>
+    <section className={`space-y-4 p-4 ${surfacePanelSubtleClass}`}>
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         分类与标签
       </h2>
@@ -244,7 +244,7 @@ export function TaxonomyManageSection({
               categories.map((c) => (
                 <li
                   key={c.id}
-                  className="flex flex-col gap-1 rounded-lg bg-zinc-50 px-2 py-1.5 dark:bg-zinc-900 sm:flex-row sm:items-center sm:justify-between"
+                  className={`flex flex-col gap-1 px-2 py-1.5 sm:flex-row sm:items-center sm:justify-between ${surfaceFieldClass}`}
                 >
                   {editingCategoryId === c.id ? (
                     <div className="flex w-full flex-wrap items-center gap-2">
@@ -322,7 +322,7 @@ export function TaxonomyManageSection({
               tags.map((t) => (
                 <li
                   key={t.id}
-                  className="flex flex-col gap-1 rounded-lg bg-zinc-50 px-2 py-1.5 dark:bg-zinc-900 sm:flex-row sm:items-center sm:justify-between"
+                  className={`flex flex-col gap-1 px-2 py-1.5 sm:flex-row sm:items-center sm:justify-between ${surfaceFieldClass}`}
                 >
                   {editingTagId === t.id ? (
                     <div className="flex w-full flex-wrap items-center gap-2">

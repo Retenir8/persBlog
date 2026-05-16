@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth";
 import { PaginationNav } from "@/components/layout/PaginationNav";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import {
+  surfaceFieldClass,
+  surfacePanelNestedClass,
+  surfacePanelSubtleClass,
+} from "@/lib/surfaceStyles";
 import { searchPosts } from "@/lib/services/postService";
 import { listCategories, listTags } from "@/lib/services/categoryTagService";
 import { PostCard } from "./PostCard";
@@ -51,7 +55,7 @@ export async function PostIndex({
   return (
     <div className="space-y-8">
       <form
-        className={`space-y-4 p-4 ${surfacePanelClass}`}
+        className={`space-y-4 p-4 ${surfacePanelSubtleClass}`}
         method="get"
         action={path}
       >
@@ -67,7 +71,7 @@ export async function PostIndex({
               name="keyword"
               defaultValue={keyword ?? ""}
               placeholder="搜索标题或正文"
-              className="h-10 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+              className={`h-10 px-3 py-2 text-sm ${surfaceFieldClass}`}
             />
           </label>
           <button
@@ -89,7 +93,7 @@ export async function PostIndex({
 
       {result.posts.length === 0 ? (
         <div
-          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelNestedClass}`}
         >
           暂无文章
         </div>

@@ -2,7 +2,20 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --page-canvas: #ffffff;
+  --surface-accent: #ffffff;
+  --surface-0-bg: #ffffff;
+  --surface-1-bg: #ffffff;
+  --surface-2-bg: #ffffff;
+  --surface-3-bg: #ffffff;
+  --surface-field-bg: #ffffff;
+  --surface-chip-bg: #ffffff;
+  --surface-chip-border: rgb(0 0 0 / 0.2);
+  --surface-0-border: rgb(0 0 0 / 0.18);
+  --surface-1-border: rgb(0 0 0 / 0.14);
+  --surface-2-border: rgb(0 0 0 / 0.1);
+  --surface-3-border: rgb(0 0 0 / 0.08);
   --shadow-surface:
     0 1px 1px rgb(0 0 0 / 0.03),
     0 4px 14px rgb(0 0 0 / 0.05),
@@ -20,10 +33,53 @@
   --font-mono: var(--font-geist-mono);
 }
 
+:root[data-surface-custom] {
+  --surface-0-bg: var(--surface-accent);
+  --surface-1-bg: color-mix(in srgb, var(--surface-accent) 50%, #ffffff 50%);
+  --surface-2-bg: color-mix(in srgb, var(--surface-accent) 28%, #ffffff 72%);
+  --surface-3-bg: color-mix(in srgb, var(--surface-accent) 16%, var(--page-canvas) 84%);
+  --surface-field-bg: color-mix(in srgb, var(--surface-accent) 10%, #ffffff 90%);
+  --surface-chip-bg: color-mix(in srgb, var(--surface-accent) 24%, var(--surface-2-bg) 76%);
+  --surface-chip-border: color-mix(in srgb, var(--surface-chip-bg) 55%, #71717a 45%);
+  --surface-0-border: color-mix(in srgb, var(--surface-0-bg) 68%, #71717a 32%);
+  --surface-1-border: color-mix(in srgb, var(--surface-1-bg) 68%, #71717a 32%);
+  --surface-2-border: color-mix(in srgb, var(--surface-2-bg) 62%, #71717a 38%);
+  --surface-3-border: color-mix(in srgb, var(--surface-3-bg) 55%, #71717a 45%);
+}
+
 @media (prefers-color-scheme: dark) {
+  :root:not([data-surface-custom]) {
+    --surface-0-bg: #000000;
+    --surface-1-bg: #000000;
+    --surface-2-bg: #000000;
+    --surface-3-bg: #000000;
+    --surface-field-bg: #000000;
+    --surface-chip-bg: #000000;
+    --surface-chip-border: rgb(255 255 255 / 0.22);
+    --page-canvas: #000000;
+    --surface-0-border: rgb(255 255 255 / 0.2);
+    --surface-1-border: rgb(255 255 255 / 0.16);
+    --surface-2-border: rgb(255 255 255 / 0.12);
+    --surface-3-border: rgb(255 255 255 / 0.1);
+  }
+
+  :root[data-surface-custom] {
+    --surface-0-bg: color-mix(in srgb, var(--surface-accent) 80%, #09090b 20%);
+    --surface-1-bg: color-mix(in srgb, var(--surface-accent) 40%, #09090b 60%);
+    --surface-2-bg: color-mix(in srgb, var(--surface-accent) 22%, #09090b 78%);
+    --surface-3-bg: color-mix(in srgb, var(--surface-accent) 12%, var(--page-canvas) 88%);
+    --surface-field-bg: color-mix(in srgb, var(--surface-accent) 8%, #18181b 92%);
+    --surface-chip-bg: color-mix(in srgb, var(--surface-accent) 20%, var(--surface-2-bg) 80%);
+    --surface-chip-border: color-mix(in srgb, var(--surface-chip-bg) 52%, #52525b 48%);
+    --surface-0-border: color-mix(in srgb, var(--surface-0-bg) 65%, #52525b 35%);
+    --surface-1-border: color-mix(in srgb, var(--surface-1-bg) 62%, #52525b 38%);
+    --surface-2-border: color-mix(in srgb, var(--surface-2-bg) 58%, #52525b 42%);
+    --surface-3-border: color-mix(in srgb, var(--surface-3-bg) 54%, #52525b 46%);
+  }
+
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #ffffff;
     --shadow-surface:
       0 1px 0 rgb(255 255 255 / 0.04) inset,
       0 1px 2px rgb(0 0 0 / 0.45),

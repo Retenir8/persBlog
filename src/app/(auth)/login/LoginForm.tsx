@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { PET_LOGIN_TIP_SESSION_KEY } from "@/lib/petLoginTip";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelTopClass } from "@/lib/surfaceStyles";
 
 export default function LoginForm() {
   const params = useSearchParams();
@@ -47,7 +47,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className={`space-y-4 p-6 ${surfacePanelClass}`}
+      className={`space-y-4 p-6 ${surfacePanelTopClass}`}
     >
       <label className="block text-sm font-medium">
         邮箱

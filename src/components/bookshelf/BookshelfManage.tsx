@@ -13,7 +13,7 @@ import {
 } from "@/lib/bookshelf";
 import { Button, outlineLinkClassName } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelClass, surfacePanelNestedClass } from "@/lib/surfaceStyles";
 
 export type BookshelfItemRow = {
   id: string;
@@ -462,7 +462,7 @@ export function BookshelfManage({
 
       {filtered.length === 0 ? (
         <div
-          className={`px-6 py-16 text-center ${surfacePanelClass}`}
+          className={`px-6 py-16 text-center ${surfacePanelNestedClass}`}
         >
           <p className="text-4xl" aria-hidden>
             📖

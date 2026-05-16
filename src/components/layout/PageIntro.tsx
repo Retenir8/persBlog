@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelTopClass } from "@/lib/surfaceStyles";
 
 type PageIntroProps = {
   title: string;
@@ -23,7 +23,7 @@ export function PageIntro({ title, description, action }: PageIntroProps) {
 
   return (
     <div
-      className={`p-5 sm:p-6 ${surfacePanelClass}`}
+      className={`p-5 sm:p-6 ${surfacePanelTopClass}`}
     >
       {action ? (
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">

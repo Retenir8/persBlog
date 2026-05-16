@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelClass, surfacePanelNestedClass } from "@/lib/surfaceStyles";
 
 export type GuestbookEntryDTO = {
   id: string;
@@ -139,7 +139,7 @@ export function GuestbookSection({
       {!isOwnWall ? (
         <form
           onSubmit={submit}
-          className={`space-y-3 p-4 ${surfacePanelClass}`}
+          className={`space-y-3 p-4 ${surfacePanelNestedClass}`}
         >
           {error ? (
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
@@ -171,7 +171,7 @@ export function GuestbookSection({
         </form>
       ) : (
         <p
-          className={`px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 ${surfacePanelClass}`}
+          className={`px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 ${surfacePanelNestedClass}`}
         >
           这是你的主页，访客可以在这里给你留言；请切换到其他用户主页体验留言，或在留言广场查看全站动态。
         </p>
@@ -189,7 +189,7 @@ export function GuestbookSection({
             return (
           <li
             key={entry.id}
-            className={`p-4 ${surfacePanelClass}`}
+            className={`p-4 ${surfacePanelNestedClass}`}
           >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">

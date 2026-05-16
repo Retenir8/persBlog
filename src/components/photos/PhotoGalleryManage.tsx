@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelNestedClass, surfacePanelSubtleClass } from "@/lib/surfaceStyles";
 
 export type PhotoCategoryRow = {
   id: string;
@@ -226,7 +226,7 @@ export function PhotoGalleryManage({
 
   return (
     <div className="space-y-8">
-      <div className={`flex flex-wrap gap-2 p-3 ${surfacePanelClass}`}>
+      <div className={`flex flex-wrap gap-2 p-3 ${surfacePanelSubtleClass}`}>
         <Link
           href="/photos"
           className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${tabClass(
@@ -250,7 +250,7 @@ export function PhotoGalleryManage({
 
       {canManage && (
         <>
-          <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+          <div className={`space-y-4 p-4 ${surfacePanelNestedClass}`}>
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               管理分类
             </h2>
@@ -339,7 +339,7 @@ export function PhotoGalleryManage({
             ) : null}
           </div>
 
-          <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+          <div className={`space-y-4 p-4 ${surfacePanelNestedClass}`}>
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               上传照片
             </h2>

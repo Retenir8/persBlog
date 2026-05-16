@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { ChefCatPet } from "@/components/pet/ChefCatPet";
 import { Providers } from "@/components/providers";
+import { SURFACE_THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme/surfaceTheme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,10 @@ export default function RootLayout({
       lang="zh-CN"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+      <body className="min-h-full flex flex-col bg-[var(--background)] font-sans text-[var(--foreground)]">
+        <script
+          dangerouslySetInnerHTML={{ __html: SURFACE_THEME_BOOTSTRAP_SCRIPT }}
+        />
         <Providers>
           <Navbar />
           <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8">

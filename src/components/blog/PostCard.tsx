@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Post, User, Category, PostTag, Tag } from "@/generated/prisma";
+import { postCardSurfaceClass, surfaceChipClass } from "@/lib/surfaceStyles";
 import { ViewCount } from "./ViewCount";
 
 type PostWithRelations = Post & {
@@ -19,7 +20,7 @@ export function PostCard({ post }: { post: PostWithRelations }) {
   }).format(new Date(post.createdAt));
 
   return (
-    <article className="rounded-2xl border border-zinc-200/70 bg-white p-5 shadow-[var(--shadow-surface)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-zinc-300/80 hover:shadow-[var(--shadow-surface-hover)] dark:border-zinc-800/70 dark:bg-zinc-950 dark:hover:border-zinc-700/80">
+    <article className={`p-5 ${postCardSurfaceClass}`}>
       <Link href={`/posts/${post.id}`}>
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
           {post.title}
@@ -40,7 +41,7 @@ export function PostCard({ post }: { post: PostWithRelations }) {
         {post.category && (
           <>
             <span>·</span>
-            <span className="rounded-full bg-zinc-100 px-2 py-0.5 dark:bg-zinc-800">
+            <span className={surfaceChipClass}>
               {post.category.name}
             </span>
           </>
@@ -48,7 +49,7 @@ export function PostCard({ post }: { post: PostWithRelations }) {
         {post.tags.map((pt) => (
           <span
             key={pt.tagId}
-            className="rounded-full border border-zinc-200 px-2 py-0.5 dark:border-zinc-700"
+            className={surfaceChipClass}
           >
             {pt.tag.name}
           </span>

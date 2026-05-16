@@ -6,7 +6,7 @@ import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { WidgetPreviewActions } from "./WidgetPreviewActions";
 import { getUserWidgetFields } from "@/lib/services/userWidgetSql";
 import { PageIntro } from "@/components/layout/PageIntro";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelTopClass } from "@/lib/surfaceStyles";
 
 export default async function WidgetPreviewPage({
   params,
@@ -55,7 +55,7 @@ export default async function WidgetPreviewPage({
         />
       </div>
 
-      <div className={`p-4 ${surfacePanelClass}`}>
+      <div className={`p-4 ${surfacePanelTopClass}`}>
         <WidgetPreviewActions
           widgetKey={key}
           userId={ownerId}

@@ -12,7 +12,7 @@ import CommentSection from "@/components/comment/CommentSection";
 import { ViewCount } from "@/components/blog/ViewCount";
 import { LikeButton } from "@/components/blog/LikeButton";
 import { PetReadArticleButton } from "@/components/pet/PetReadArticleButton";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfaceChipClass, surfacePanelTopClass } from "@/lib/surfaceStyles";
 
 export default async function PostDetailPage({
   params,
@@ -54,7 +54,7 @@ export default async function PostDetailPage({
 
   return (
     <article className="mx-auto max-w-3xl space-y-8">
-      <div className={`p-5 sm:p-6 ${surfacePanelClass}`}>
+      <div className={`p-5 sm:p-6 ${surfacePanelTopClass}`}>
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/posts" className={outlineLinkClassName}>
@@ -92,14 +92,14 @@ export default async function PostDetailPage({
             <ViewCount postId={post.id} initialCount={post.viewCount} isDetailPage={true} />
             <LikeButton postId={post.id} initialCount={post.likeCount || 0} initialLiked={false} />
             {post.category && (
-              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+              <span className={surfaceChipClass}>
                 {post.category.name}
               </span>
             )}
             {post.tags.map((pt) => (
               <span
                 key={pt.tagId}
-                className="rounded-full border border-zinc-200 px-2 py-0.5 dark:border-zinc-700"
+                className={surfaceChipClass}
               >
                 {pt.tag.name}
               </span>

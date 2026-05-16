@@ -1,0 +1,74 @@
+export type Rgb = { r: number; g: number; b: number };
+export type Hsv = { h: number; s: number; v: number };
+
+export function rgbEqual(a: Rgb, b: Rgb) {
+  return a.r === b.r && a.g === b.g && a.b === b.b;
+}
+
+export function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, n));
+}
+
+export function rgbToHex({ r, g, b }: Rgb) {
+  const to = (n: number) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
+  return `#${to(r)}${to(g)}${to(b)}`;
+}
+
+export function hexToRgb(hex: string): Rgb | null {
+  const raw = hex.replace("#", "").trim();
+  if (!/^[0-9a-fA-F]{6}$/.test(raw)) return null;
+  return {
+    r: parseInt(raw.slice(0, 2), 16),
+    g: parseInt(raw.slice(2, 4), 16),
+    b: parseInt(raw.slice(4, 6), 16),
+  };
+}
+
+export function rgbToHsv({ r, g, b }: Rgb): Hsv {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const d = max - min;
+
+  let h = 0;
+  if (d !== 0) {
+    if (max === rn) h = ((gn - bn) / d) % 6;
+    else if (max === gn) h = (bn - rn) / d + 2;
+    else h = (rn - gn) / d + 4;
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+
+  const s = max === 0 ? 0 : d / max;
+  return { h, s: s * 100, v: max * 100 };
+}
+
+export function hsvToRgb({ h, s, v }: Hsv): Rgb {
+  const sn = clamp(s, 0, 100) / 100;
+  const vn = clamp(v, 0, 100) / 100;
+  const c = vn * sn;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = vn - c;
+
+  let rp = 0;
+  let gp = 0;
+  let bp = 0;
+  if (h < 60) [rp, gp, bp] = [c, x, 0];
+  else if (h < 120) [rp, gp, bp] = [x, c, 0];
+  else if (h < 180) [rp, gp, bp] = [0, c, x];
+  else if (h < 240) [rp, gp, bp] = [0, x, c];
+  else if (h < 300) [rp, gp, bp] = [x, 0, c];
+  else [rp, gp, bp] = [c, 0, x];
+
+  return {
+    r: Math.round((rp + m) * 255),
+    g: Math.round((gp + m) * 255),
+    b: Math.round((bp + m) * 255),
+  };
+}
+
+export function rgbToCss({ r, g, b }: Rgb) {
+  return `rgb(${clamp(Math.round(r), 0, 255)} ${clamp(Math.round(g), 0, 255)} ${clamp(Math.round(b), 0, 255)})`;
+}

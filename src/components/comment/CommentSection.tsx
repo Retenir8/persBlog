@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelClass, surfacePanelNestedClass } from "@/lib/surfaceStyles";
 
 export type CommentNode = {
   id: string;
@@ -111,7 +111,7 @@ function CommentItem({
 
   return (
     <li
-      className={`rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950 ${depth ? "mt-2 ml-4 md:ml-8" : ""}`}
+      className={`p-3 ${surfacePanelNestedClass} ${depth ? "mt-2 ml-4 md:ml-8" : ""}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">

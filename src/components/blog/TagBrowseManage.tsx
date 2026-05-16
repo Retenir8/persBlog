@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelSubtleClass } from "@/lib/surfaceStyles";
 
 type TagRow = {
   id: string;
@@ -109,7 +109,7 @@ export function TagBrowseManage({
   return (
     <div className="space-y-8">
       {canManage && (
-        <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+        <div className={`space-y-4 p-4 ${surfacePanelSubtleClass}`}>
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             新建标签
           </h2>

@@ -7,7 +7,7 @@ import { SongAudioPlayer } from "@/components/music/SongAudioPlayer";
 import { Button, outlineLinkClassName } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { neteasePlayerEmbedSrc, neteaseWebUrl } from "@/lib/netease";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelNestedClass } from "@/lib/surfaceStyles";
 
 export type MusicItemRow = {
   id: string;
@@ -114,7 +114,7 @@ export function MusicBrowseManage({
   return (
     <div className="space-y-8">
       {canManage && (
-        <div className={`space-y-4 p-4 ${surfacePanelClass}`}>
+        <div className={`space-y-4 p-4 ${surfacePanelNestedClass}`}>
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             添加网易云音乐
           </h2>
@@ -171,7 +171,7 @@ export function MusicBrowseManage({
 
       {items.length === 0 ? (
         <div
-          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelNestedClass}`}
         >
           {canManage
             ? "还没有添加音乐，在上方粘贴网易云链接即可。"

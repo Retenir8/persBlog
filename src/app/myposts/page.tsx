@@ -7,7 +7,7 @@ import { ProfileWidgetsSection } from "@/components/widgets/ProfileWidgetsSectio
 import { MyPostsActions } from "./PostsActions";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { PaginationNav } from "@/components/layout/PaginationNav";
-import { pagePrimaryCtaClassName, surfacePanelClass } from "@/lib/surfaceStyles";
+import { pagePrimaryCtaClassName, surfacePanelNestedClass } from "@/lib/surfaceStyles";
 
 function first(v: string | string[] | undefined) {
   if (Array.isArray(v)) return v[0];
@@ -55,7 +55,7 @@ export default async function MyPostsPage({
 
       {posts.length === 0 ? (
         <div
-          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelNestedClass}`}
         >
           还没有文章，去写一篇吧。
         </div>
@@ -64,7 +64,7 @@ export default async function MyPostsPage({
           {posts.map((post) => (
             <li
               key={post.id}
-              className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between ${surfacePanelClass}`}
+              className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between ${surfacePanelNestedClass}`}
             >
               <div>
                 <Link

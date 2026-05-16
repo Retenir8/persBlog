@@ -5,7 +5,7 @@ import { listAllPostsForAdmin } from "@/lib/services/postService";
 import { AdminPostDelete } from "./AdminPostDelete";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { PaginationNav } from "@/components/layout/PaginationNav";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelNestedClass } from "@/lib/surfaceStyles";
 
 function first(v: string | string[] | undefined) {
   if (Array.isArray(v)) return v[0];
@@ -36,12 +36,12 @@ export default async function AdminPage({
 
       {posts.length === 0 ? (
         <div
-          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelClass}`}
+          className={`px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400 ${surfacePanelNestedClass}`}
         >
           暂无文章
         </div>
       ) : (
-        <div className={`overflow-x-auto ${surfacePanelClass}`}>
+        <div className={`overflow-x-auto ${surfacePanelNestedClass}`}>
           <table className="w-full min-w-[680px] text-left text-sm">
             <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
               <tr>

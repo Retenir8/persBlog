@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PageIntro } from "@/components/layout/PageIntro";
-import { surfacePanelClass } from "@/lib/surfaceStyles";
+import { surfacePanelTopClass } from "@/lib/surfaceStyles";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function RegisterPage() {
       <PageIntro title="注册" />
       <form
         onSubmit={onSubmit}
-        className={`space-y-4 p-6 ${surfacePanelClass}`}
+        className={`space-y-4 p-6 ${surfacePanelTopClass}`}
       >
         <label className="block text-sm font-medium">
           昵称（可选）

@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  password           String
+  name               String?
+  avatar             String?
+  bio                String?
+  signature          String?
+  tags               String?
+  location           String?
+  occupation         String?
+  github             String?
+  wechat             String?
+  website            String?
+  role               String    @default("USER")
+  posts              Post[]
+  comments           Comment[]
+  likes              Like[]
+  categories         Category[]
+  tagsOwned          Tag[] @relation("UserTags")
+  musicItems         MusicItem[]
+  bookshelfItems     BookshelfItem[]
+  photoCategories    PhotoCategory[]
+  photos             Photo[]
+  guestbookReceived  GuestbookEntry[] @relation("GuestbookHost")
+  guestbookWritten   GuestbookEntry[] @relation("GuestbookAuthor")
+  following          Follow[] @relation("Follower")
+  followers          Follow[] @relation("Following")
+  friendGroups       FriendGroup[]
+  friendGroupMembers FriendGroupMember[]
+  conversations1     Conversation[] @relation("ConversationUser1")
+  conversations2     Conversation[] @relation("ConversationUser2")
+  messages           Message[]
+  blacklists         Blacklist[] @relation("BlacklistUser")
+  blockedBy          Blacklist[] @relation("BlacklistBlocked")
+  profileWidgets     String          @default("[]")
+  zenQuoteText       String?
+  moodCalendarData   String          @default("{}")
+  readReceiptEnabled Boolean         @default(true)
+  lastSeenAt         DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model GuestbookEntry {
+  id           String   @id @default(cuid())
+  content      String
+  hostUserId   String
+  host         User     @relation("GuestbookHost", fields: [hostUserId], references: [id], onDelete: Cascade)
+  authorUserId String?
+  author       User?    @relation("GuestbookAuthor", fields: [authorUserId], references: [id], onDelete: SetNull)
+  guestName    String?
+  createdAt    DateTime @default(now())
+
+  @@index([hostUserId])
+  @@index([createdAt])
+}
+
+
+
+model Category {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts  Post[]
+
+  @@unique([userId, name])
+}
+
+model Tag {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User      @relation("UserTags", fields: [userId], references: [id], onDelete: Cascade)
+  posts  PostTag[]
+
+  @@unique([userId, name])
+}
+
+model Post {
+  id               String    @id @default(cuid())
+  title            String
+  content          String
+  published        Boolean   @default(true)
+  authorId         String
+  author           User      @relation(fields: [authorId], references: [id])
+  categoryId       String?
+  category         Category? @relation(fields: [categoryId], references: [id])
+  tags             PostTag[]
+  comments         Comment[]
+  likes            Like[]
+  viewCount        Int       @default(0)
+  visibility       String    @default("PUBLIC")
+  visibleGroupIds  String?   @default("[]")
+  invisibleGroupIds String?  @default("[]")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  content   String
+  postId    String
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
+  guestName String?
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
+model MusicItem {
+  id          String      @id @default(cuid())
+  neteaseId   String
+  kind        String      @default("SONG")
+  note        String?
+  coverUrl    String?
+  trackTitle  String?
+  artistName  String?
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, neteaseId, kind])
+}
+
+model BookshelfItem {
+  id        String     @id @default(cuid())
+  title     String
+  author    String?
+  coverUrl  String?
+  note      String?
+  status    String     @default("WANT_TO_READ")
+  rating    Int?
+  linkUrl   String?
+  sortOrder Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+model PhotoCategory {
+  id        String  @id @default(cuid())
+  name      String
+  sortOrder Int     @default(0)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos    Photo[]
+
+  @@unique([userId, name])
+}
+
+model Photo {
+  id         String         @id @default(cuid())
+  title      String?
+  imageUrl   String
+  categoryId String?
+  category   PhotoCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  sortOrder  Int            @default(0)
+  createdAt  DateTime       @default(now())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id                 String   @id @default(cuid())
+  followerId         String
+  followingId        String
+  follower           User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following          User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  notificationEnabled Boolean @default(true)
+  createdAt          DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Blacklist {
+  id           String   @id @default(cuid())
+  userId       String
+  blockedUserId String
+  user         User     @relation("BlacklistUser", fields: [userId], references: [id], onDelete: Cascade)
+  blockedUser  User     @relation("BlacklistBlocked", fields: [blockedUserId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, blockedUserId])
+}
+
+model FriendGroup {
+  id          String             @id @default(cuid())
+  name        String
+  userId      String
+  isDefault   Boolean            @default(false)
+  sortOrder   Int                @default(0)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members     FriendGroupMember[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([userId, name])
+}
+
+model FriendGroupMember {
+  id              String       @id @default(cuid())
+  groupId         String
+  userId          String
+  group           FriendGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addedAt         DateTime     @default(now())
+  lastInteractedAt DateTime    @default(now())
+
+  @@unique([groupId, userId])
+}
+
+model Conversation {
+  id        String               @id @default(cuid())
+  user1Id   String
+  user2Id   String
+  user1     User                 @relation("ConversationUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2     User                 @relation("ConversationUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages  Message[]
+  setting   ConversationSetting?
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@unique([user1Id, user2Id])
+}
+
+model ConversationSetting {
+  id              String        @id @default(cuid())
+  conversationId  String        @unique
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId          String
+  isMuted         Boolean       @default(false)
+  isPinned        Boolean       @default(false)
+  readReceiptEnabled Boolean?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  contentType    String        @default("TEXT")
+  fileUrl        String?
+  fileName       String?
+  isRead         Boolean       @default(false)
+  readAt         DateTime?
+  isRetracted    Boolean       @default(false)
+  retractedAt    DateTime?
+  createdAt      DateTime      @default(now())
+
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User          @relation(fields: [senderId], references: [id])
+}

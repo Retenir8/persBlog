@@ -1,0 +1,75 @@
+/* 厨师猫贴纸：跳跃为 CSS 关键帧；高兴摇头为透明 GIF。透明底 + 柔边投影 */
+
+.chef-cat-pet__glow {
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.06)) drop-shadow(0 8px 20px rgb(0 0 0 / 0.08));
+}
+
+@media (prefers-color-scheme: dark) {
+  .chef-cat-pet__glow {
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.45)) drop-shadow(0 10px 24px rgb(0 0 0 / 0.35));
+  }
+}
+
+.chef-cat-pet__sprite-wrap {
+  transform-origin: 50% 92%;
+  will-change: transform;
+}
+
+.chef-cat-pet__sprite {
+  display: block;
+  width: 7.5rem;
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+  transform-origin: 50% 92%;
+  vertical-align: bottom;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.chef-cat-pet__sprite:focus,
+.chef-cat-pet__sprite:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.chef-cat-pet__sprite--jump {
+  animation: chef-cat-jump 0.72s cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes chef-cat-jump {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  10% {
+    /* 蓄力微蹲 */
+    transform: translateY(0) scale(1.06, 0.9);
+  }
+  28% {
+    /* 起跳拉伸 */
+    transform: translateY(-4.25rem) scale(0.94, 1.08);
+  }
+  48% {
+    /* 顶点 */
+    transform: translateY(-4.75rem) scale(0.96, 1.05);
+  }
+  72% {
+    /* 落地压扁 */
+    transform: translateY(0) scale(1.08, 0.86);
+  }
+  86% {
+    /* 小回弹 */
+    transform: translateY(-0.45rem) scale(0.98, 1.04);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chef-cat-pet__sprite--jump {
+    animation: none;
+  }
+}

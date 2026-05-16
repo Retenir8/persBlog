@@ -11,6 +11,7 @@ export default auth((req) => {
     pathname.startsWith("/admin") ||
     pathname.startsWith("/categories") ||
     pathname.startsWith("/tags") ||
+    pathname.startsWith("/bookshelf") ||
     pathname.startsWith("/music") ||
     pathname.startsWith("/photos") ||
     /^\/posts\/[^/]+\/edit$/.test(pathname);
@@ -42,6 +43,8 @@ export const config = {
     "/categories/:path*",
     "/tags",
     "/tags/:path*",
+    "/bookshelf",
+    "/bookshelf/:path*",
     "/music",
     "/music/:path*",
     "/photos",

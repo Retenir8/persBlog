@@ -6,7 +6,7 @@ import type { NeteaseKind } from "@/generated/prisma";
 import { SongAudioPlayer } from "@/components/music/SongAudioPlayer";
 import { Button, outlineLinkClassName } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { neteasePlayerEmbedSrc } from "@/lib/netease";
+import { neteasePlayerEmbedSrc, neteaseWebUrl } from "@/lib/netease";
 import { surfacePanelClass } from "@/lib/surfaceStyles";
 
 export type MusicItemRow = {
@@ -190,6 +190,7 @@ export function MusicBrowseManage({
               (item.kind === "PLAYLIST" ? "网易云歌单" : "网易云音乐");
 
             const embedSrc = neteasePlayerEmbedSrc(item.kind, item.neteaseId);
+            const neteaseHref = neteaseWebUrl(item.kind, item.neteaseId);
             const playlistIframeHeight = 200;
 
             return (
@@ -227,28 +228,27 @@ export function MusicBrowseManage({
                   {item.kind === "SONG" ? (
                     <SongAudioPlayer neteaseId={item.neteaseId} />
                   ) : (
-                    <div className="mt-2 space-y-2">
-                      <div className="max-h-[200px] overflow-hidden rounded-lg bg-zinc-50 dark:bg-zinc-900/80">
-                        <iframe
-                          title={displayTitle}
-                          src={embedSrc}
-                          width="100%"
-                          height={playlistIframeHeight}
-                          className="h-[200px] w-full border-0"
-                          allow="encrypted-media; autoplay"
-                          referrerPolicy="no-referrer-when-downgrade"
-                        />
-                      </div>
-                      <a
-                        href={`https://music.163.com/playlist?id=${item.neteaseId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`${outlineLinkClassName} !inline-flex w-full justify-center text-xs`}
-                      >
-                        在网易云打开歌单
-                      </a>
+                    <div className="mt-2 max-h-[200px] overflow-hidden rounded-lg bg-zinc-50 dark:bg-zinc-900/80">
+                      <iframe
+                        title={displayTitle}
+                        src={embedSrc}
+                        width="100%"
+                        height={playlistIframeHeight}
+                        className="h-[200px] w-full border-0"
+                        allow="encrypted-media; autoplay"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
                     </div>
                   )}
+
+                  <a
+                    href={neteaseHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`${outlineLinkClassName} mt-2 !inline-flex w-full justify-center text-xs`}
+                  >
+                    用网易云打开
+                  </a>
                 </div>
               </li>
             );

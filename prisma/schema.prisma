@@ -29,6 +29,7 @@ model User {
   categories Category[]
   tagsOwned Tag[] @relation("UserTags")
   musicItems MusicItem[]
+  bookshelfItems BookshelfItem[]
   photoCategories PhotoCategory[]
   photos    Photo[]
   guestbookReceived GuestbookEntry[] @relation("GuestbookHost")
@@ -136,6 +137,31 @@ model Like {
 enum NeteaseKind {
   SONG
   PLAYLIST
+}
+
+enum BookStatus {
+  WANT_TO_READ
+  READING
+  FINISHED
+}
+
+model BookshelfItem {
+  id        String     @id @default(cuid())
+  title     String
+  author    String?
+  coverUrl  String?
+  note      String?
+  status    BookStatus @default(WANT_TO_READ)
+  rating    Int?
+  linkUrl   String?
+  sortOrder Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, status])
 }
 
 model MusicItem {

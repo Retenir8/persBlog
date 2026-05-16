@@ -6,7 +6,7 @@ function clientPlayableSrc(raw: string | null): string | null {
   if (!raw) return null;
   if (raw.startsWith("https:")) return raw;
   if (raw.startsWith("http:")) {
-    return `/api/music/audio-proxy?src=${encodeURIComponent(raw)}`;
+    return `/api/music/audioProxy?src=${encodeURIComponent(raw)}`;
   }
   return raw;
 }

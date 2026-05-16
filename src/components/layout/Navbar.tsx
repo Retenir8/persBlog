@@ -41,6 +41,12 @@ export async function Navbar() {
           </Link>
           <NavArticleMenu canWritePost={!!session?.user} />
           <Link
+            href="/bookshelf"
+            className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+          >
+            书架
+          </Link>
+          <Link
             href="/music"
             className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
           >

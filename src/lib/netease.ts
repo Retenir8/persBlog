@@ -58,6 +58,12 @@ export function parseNeteaseUrl(input: string): ParsedNetease | null {
   return null;
 }
 
+/** 在浏览器中打开网易云音乐网页（单曲 / 歌单） */
+export function neteaseWebUrl(kind: NeteaseKind, neteaseId: string): string {
+  const path = kind === "PLAYLIST" ? "playlist" : "song";
+  return `https://music.163.com/#/${path}?id=${encodeURIComponent(neteaseId)}`;
+}
+
 /** 网易云外链播放器 iframe src（官方 outchain player） */
 export function neteasePlayerEmbedSrc(kind: NeteaseKind, neteaseId: string): string {
   const type = kind === "PLAYLIST" ? 0 : 2;

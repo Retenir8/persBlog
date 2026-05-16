@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Category, Post, Tag } from "@/generated/prisma";
 import Editor from "@/components/blog/Editor";
@@ -10,14 +10,25 @@ import { surfacePanelTopClass } from "@/lib/surfaceStyles";
 
 type PostTagRow = { tagId: string; tag: Tag };
 
+const fieldLabelClass =
+  "text-sm font-medium text-zinc-500 dark:text-zinc-400";
+
+type FriendGroup = {
+  id: string;
+  name: string;
+  isDefault: boolean;
+};
+
 export default function PostEditorForm({
   categories,
   tags,
   post,
+  heading,
 }: {
   categories: Category[];
   tags: Tag[];
   post?: Post & { tags?: PostTagRow[] };
+  heading?: string;
 }) {
   const router = useRouter();
   const isEdit = !!post;
@@ -27,21 +38,78 @@ export default function PostEditorForm({
   const [categoryId, setCategoryId] = useState(post?.categoryId ?? "");
   const [selectedTags, setSelectedTags] = useState<Record<string, boolean>>(
     () => {
-          const initial: Record<string, boolean> = {};
-          post?.tags?.forEach((pt) => {
-            initial[pt.tagId] = true;
-          });
-          return initial;
-        }
+      const initial: Record<string, boolean> = {};
+      post?.tags?.forEach((pt) => {
+        initial[pt.tagId] = true;
+      });
+      return initial;
+    }
   );
   const [busy, setBusy] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [newTag, setNewTag] = useState("");
+  
+  const [friendGroups, setFriendGroups] = useState<FriendGroup[]>([]);
+  const [visibility, setVisibility] = useState<"PUBLIC" | "FRIENDS" | "GROUP">(
+    (post?.visibility as any) || "PUBLIC"
+  );
+  const [selectedVisibleGroups, setSelectedVisibleGroups] = useState<Record<string, boolean>>(() => {
+    try {
+      const ids = JSON.parse(post?.visibleGroupIds || "[]");
+      const initial: Record<string, boolean> = {};
+      ids.forEach((id: string) => {
+        initial[id] = true;
+      });
+      return initial;
+    } catch {
+      return {};
+    }
+  });
+  const [selectedInvisibleGroups, setSelectedInvisibleGroups] = useState<Record<string, boolean>>(() => {
+    try {
+      const ids = JSON.parse(post?.invisibleGroupIds || "[]");
+      const initial: Record<string, boolean> = {};
+      ids.forEach((id: string) => {
+        initial[id] = true;
+      });
+      return initial;
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    fetchFriendGroups();
+  }, []);
+
+  const fetchFriendGroups = async () => {
+    try {
+      const response = await fetch("/api/friend-groups");
+      const data = await response.json();
+      if (data.success) {
+        setFriendGroups(data.groups || []);
+      }
+    } catch (error) {
+      console.error("获取好友分组失败:", error);
+    }
+  };
 
   const tagIds = useMemo(
     () => Object.entries(selectedTags).filter(([, v]) => v).map(([id]) => id),
     [selectedTags]
   );
+
+  const visibleGroupIds = useMemo(() => {
+    return Object.entries(selectedVisibleGroups)
+      .filter(([, v]) => v)
+      .map(([id]) => id);
+  }, [selectedVisibleGroups]);
+
+  const invisibleGroupIds = useMemo(() => {
+    return Object.entries(selectedInvisibleGroups)
+      .filter(([, v]) => v)
+      .map(([id]) => id);
+  }, [selectedInvisibleGroups]);
 
   async function addCategory() {
     const name = newCategory.trim();
@@ -78,13 +146,20 @@ export default function PostEditorForm({
   async function save(published: boolean) {
     setBusy(true);
     try {
-      const payload = {
+      const payload: any = {
         title,
         content,
         categoryId: categoryId || null,
         tagIds,
         published,
+        visibility,
       };
+
+      if (visibility === "GROUP") {
+        payload.visibleGroupIds = JSON.stringify(visibleGroupIds);
+        payload.invisibleGroupIds = JSON.stringify(invisibleGroupIds);
+      }
+
       const url = isEdit ? `/api/posts/${post!.id}` : "/api/posts";
       const method = isEdit ? "PUT" : "POST";
       const res = await fetch(url, {
@@ -110,26 +185,31 @@ export default function PostEditorForm({
       className="mx-auto max-w-3xl space-y-6"
     >
       <div className={`space-y-6 p-6 ${surfacePanelTopClass}`}>
-        <label className="block text-sm font-medium">
-        标题
-        <Input
-          className="mt-1"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </label>
+        {heading ? (
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            {heading}
+          </h2>
+        ) : null}
 
-      <div>
-        <p className="mb-2 text-sm font-medium">正文</p>
-        <Editor content={content} onChange={setContent} />
-      </div>
+        <label className="flex flex-col gap-1">
+          <span className={fieldLabelClass}>标题</span>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm font-medium">
-          分类
+        <div>
+          <span className={`mb-2 block ${fieldLabelClass}`}>正文</span>
+          <Editor content={content} onChange={setContent} />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-1">
+          <span className={fieldLabelClass}>分类</span>
           <select
-            className="mt-1 box-border h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
+            className="box-border h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
           >
@@ -141,9 +221,9 @@ export default function PostEditorForm({
             ))}
           </select>
         </label>
-        <label className="block text-sm font-medium">
-          新建分类
-          <div className="mt-1 flex gap-2">
+        <label className="flex flex-col gap-1">
+          <span className={fieldLabelClass}>新建分类</span>
+          <div className="flex gap-2">
             <Input
               className="h-10 min-w-0 flex-1"
               value={newCategory}
@@ -163,7 +243,7 @@ export default function PostEditorForm({
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-medium">标签</p>
+        <span className={`mb-2 block ${fieldLabelClass}`}>标签</span>
         <div className="flex flex-wrap gap-2">
           {tags.map((t) => (
             <label
@@ -181,9 +261,9 @@ export default function PostEditorForm({
             </label>
           ))}
         </div>
-        <label className="mt-3 block text-sm font-medium">
-          新标签
-          <div className="mt-1 flex gap-2">
+        <label className="mt-3 flex flex-col gap-1">
+          <span className={fieldLabelClass}>新标签</span>
+          <div className="flex gap-2">
             <Input
               className="h-10 min-w-0 flex-1"
               value={newTag}
@@ -200,6 +280,119 @@ export default function PostEditorForm({
             </Button>
           </div>
         </label>
+      </div>
+
+      <div>
+        <span className={`mb-2 block ${fieldLabelClass}`}>可见性设置</span>
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-3">
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2 text-sm dark:border-zinc-700">
+              <input
+                type="radio"
+                name="visibility"
+                value="PUBLIC"
+                checked={visibility === "PUBLIC"}
+                onChange={(e) => setVisibility(e.target.value as any)}
+                className="accent-blue-600"
+              />
+              <span>🌍 公开</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2 text-sm dark:border-zinc-700">
+              <input
+                type="radio"
+                name="visibility"
+                value="FRIENDS"
+                checked={visibility === "FRIENDS"}
+                onChange={(e) => setVisibility(e.target.value as any)}
+                className="accent-blue-600"
+              />
+              <span>👥 仅好友可见</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2 text-sm dark:border-zinc-700">
+              <input
+                type="radio"
+                name="visibility"
+                value="GROUP"
+                checked={visibility === "GROUP"}
+                onChange={(e) => setVisibility(e.target.value as any)}
+                className="accent-blue-600"
+              />
+              <span>📁 按分组设置</span>
+            </label>
+          </div>
+
+          {visibility === "GROUP" && (
+            <div className="space-y-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+              <div>
+                <p className="mb-2 text-sm font-medium text-green-600">
+                  ✓ 允许查看的分组
+                </p>
+                <p className="mb-2 text-xs text-gray-500">
+                  选择哪些分组可以看到这篇文章（留空则只自己可见）
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {friendGroups.length === 0 ? (
+                    <span className="text-sm text-gray-500">暂无比好分组</span>
+                  ) : (
+                    friendGroups.map((group) => (
+                      <label
+                        key={group.id}
+                        className="flex cursor-pointer items-center gap-1 rounded-full border border-green-300 bg-green-50 px-3 py-1 text-sm dark:border-green-700 dark:bg-green-900/20"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!!selectedVisibleGroups[group.id]}
+                          onChange={(e) =>
+                            setSelectedVisibleGroups((s) => ({
+                              ...s,
+                              [group.id]: e.target.checked,
+                            }))
+                          }
+                          className="accent-green-600"
+                        />
+                        {group.name}
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 text-sm font-medium text-red-600">
+                  ✗ 禁止查看的分组
+                </p>
+                <p className="mb-2 text-xs text-gray-500">
+                  选择哪些分组不可以看这篇文章
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {friendGroups.length === 0 ? (
+                    <span className="text-sm text-gray-500">暂无比好分组</span>
+                  ) : (
+                    friendGroups.map((group) => (
+                      <label
+                        key={group.id}
+                        className="flex cursor-pointer items-center gap-1 rounded-full border border-red-300 bg-red-50 px-3 py-1 text-sm dark:border-red-700 dark:bg-red-900/20"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!!selectedInvisibleGroups[group.id]}
+                          onChange={(e) =>
+                            setSelectedInvisibleGroups((s) => ({
+                              ...s,
+                              [group.id]: e.target.checked,
+                            }))
+                          }
+                          className="accent-red-600"
+                        />
+                        {group.name}
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3">

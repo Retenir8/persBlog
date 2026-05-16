@@ -203,7 +203,7 @@ export function GuestbookSection({
                     ) : (
                       <span>{displayName}</span>
                     )}
-                    <span className="ml-2 font-normal text-zinc-500">
+                    <span className="ml-2 font-normal text-zinc-500" suppressHydrationWarning>
                       {formatTime(entry.createdAt)}
                     </span>
                   </div>

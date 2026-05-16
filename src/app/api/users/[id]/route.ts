@@ -55,7 +55,7 @@ function buildUserUpdatePayload(data: Record<string, unknown>): PatchBuildResult
         )
       ),
     ];
-    patch.profileWidgets = cleaned;
+    patch.profileWidgets = JSON.stringify(cleaned);
   }
 
   if ("zenQuoteText" in data) {

@@ -17,13 +17,11 @@ export async function GET(request: NextRequest) {
           {
             title: {
               contains: query,
-              mode: "insensitive",
             },
           },
           {
             content: {
               contains: query,
-              mode: "insensitive",
             },
           },
         ],

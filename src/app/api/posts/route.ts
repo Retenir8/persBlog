@@ -18,13 +18,18 @@ export async function POST(req: Request) {
   try {
     const user = await requireAuth();
     const body = await req.json();
-    const { title, content, categoryId, tagIds, published } = body;
+    const { title, content, categoryId, tagIds, published, visibility, visibleGroupIds, invisibleGroupIds } = body;
     if (typeof title !== "string" || typeof content !== "string") {
       return NextResponse.json(
         { error: "title and content are required" },
         { status: 400 }
       );
     }
+    
+    const validVisibility = ["PUBLIC", "FRIENDS", "GROUP"].includes(visibility) 
+      ? visibility 
+      : "PUBLIC";
+    
     const post = await createPost(user.id, {
       title,
       content,
@@ -38,6 +43,9 @@ export async function POST(req: Request) {
         ? tagIds.filter((id: unknown): id is string => typeof id === "string")
         : undefined,
       published: typeof published === "boolean" ? published : undefined,
+      visibility: validVisibility,
+      visibleGroupIds: typeof visibleGroupIds === "string" ? visibleGroupIds : JSON.stringify([]),
+      invisibleGroupIds: typeof invisibleGroupIds === "string" ? invisibleGroupIds : JSON.stringify([]),
     });
     return NextResponse.json(post, { status: 201 });
   } catch (error: unknown) {

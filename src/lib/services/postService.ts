@@ -14,8 +14,8 @@ export async function searchPosts(params: SearchParams) {
 
   if (keyword) {
     where.OR = [
-      { title: { contains: keyword, mode: "insensitive" } },
-      { content: { contains: keyword, mode: "insensitive" } },
+      { title: { contains: keyword } },
+      { content: { contains: keyword } },
     ];
   }
 
@@ -62,7 +62,74 @@ export async function canViewPost(
   viewerId?: string,
   viewerRole?: string
 ) {
-  if (post.published) return true;
+  if (post.published) {
+    if (post.authorId === viewerId) return true;
+    if (viewerRole === "ADMIN") return true;
+    
+    if (post.visibility === "PUBLIC") {
+      return true;
+    }
+    
+    if (!viewerId) return false;
+    
+    if (post.visibility === "FRIENDS") {
+      const follow = await prisma.follow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: viewerId,
+            followingId: post.authorId,
+          },
+        },
+      });
+      const reverseFollow = await prisma.follow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: post.authorId,
+            followingId: viewerId,
+          },
+        },
+      });
+      return !!(follow && reverseFollow);
+    }
+    
+    if (post.visibility === "GROUP") {
+      try {
+        const visibleGroupIds = JSON.parse(post.visibleGroupIds || "[]");
+        const invisibleGroupIds = JSON.parse(post.invisibleGroupIds || "[]");
+        
+        if (visibleGroupIds.length === 0 && invisibleGroupIds.length === 0) {
+          return false;
+        }
+        
+        const viewerGroups = await prisma.friendGroupMember.findMany({
+          where: {
+            userId: viewerId,
+            groupId: { in: visibleGroupIds.length > 0 ? visibleGroupIds : invisibleGroupIds },
+          },
+          select: { groupId: true },
+        });
+        
+        const viewerGroupIds = viewerGroups.map(g => g.groupId);
+        
+        if (visibleGroupIds.length > 0) {
+          const canSee = visibleGroupIds.some((id: string) => viewerGroupIds.includes(id));
+          if (!canSee) return false;
+        }
+        
+        if (invisibleGroupIds.length > 0) {
+          const isExcluded = invisibleGroupIds.some((id: string) => viewerGroupIds.includes(id));
+          if (isExcluded) return false;
+        }
+        
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    
+    return false;
+  }
+  
   if (!viewerId) return false;
   if (post.authorId === viewerId) return true;
   if (viewerRole === "ADMIN") return true;
@@ -94,6 +161,9 @@ export async function createPost(
     categoryId?: string | null;
     tagIds?: string[];
     published?: boolean;
+    visibility?: string;
+    visibleGroupIds?: string;
+    invisibleGroupIds?: string;
   }
 ) {
   await ensureTaxonomyOwnedByAuthor(
@@ -108,6 +178,9 @@ export async function createPost(
       authorId,
       published: data.published ?? true,
       categoryId: data.categoryId ?? null,
+      visibility: data.visibility ?? "PUBLIC",
+      visibleGroupIds: data.visibleGroupIds ?? "[]",
+      invisibleGroupIds: data.invisibleGroupIds ?? "[]",
       tags: data.tagIds
         ? { create: data.tagIds.map((id) => ({ tagId: id })) }
         : undefined,
@@ -125,6 +198,9 @@ export async function updatePost(
     categoryId?: string | null;
     tagIds?: string[];
     published?: boolean;
+    visibility?: string;
+    visibleGroupIds?: string;
+    invisibleGroupIds?: string;
   }
 ) {
   const post = await prisma.post.findUnique({ where: { id: postId } });
@@ -158,6 +234,9 @@ export async function updatePost(
         ? { categoryId: data.categoryId }
         : {}),
       published: data.published,
+      visibility: data.visibility ?? post.visibility,
+      visibleGroupIds: data.visibleGroupIds ?? post.visibleGroupIds,
+      invisibleGroupIds: data.invisibleGroupIds ?? post.invisibleGroupIds,
       tags: data.tagIds
         ? { create: data.tagIds.map((id) => ({ tagId: id })) }
         : undefined,
@@ -200,9 +279,14 @@ export async function getMyPosts(
   return { posts, total, page, pageSize };
 }
 
-export async function listAllPostsForAdmin(page: number, pageSize: number) {
+export async function listAllPostsForAdmin(
+  page: number,
+  pageSize: number
+) {
+  const where = {};
   const [posts, total] = await Promise.all([
     prisma.post.findMany({
+      where,
       include: {
         author: { select: { id: true, name: true, email: true } },
         category: true,
@@ -212,7 +296,7 @@ export async function listAllPostsForAdmin(page: number, pageSize: number) {
       take: pageSize,
       orderBy: { createdAt: "desc" },
     }),
-    prisma.post.count(),
+    prisma.post.count({ where }),
   ]);
   return { posts, total, page, pageSize };
 }

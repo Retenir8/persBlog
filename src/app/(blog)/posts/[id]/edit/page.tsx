@@ -8,8 +8,6 @@ import {
   listTags,
 } from "@/lib/services/categoryTagService";
 import { getPostById } from "@/lib/services/postService";
-import { PageIntro } from "@/components/layout/PageIntro";
-
 export default async function EditPostPage({
   params,
 }: {
@@ -41,14 +39,16 @@ export default async function EditPostPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <PageIntro title="编辑文章" />
-      <div>
-        <Link href={`/posts/${post.id}`} className={outlineLinkClassName}>
-          查看文章
-        </Link>
-      </div>
-      <PostEditorForm categories={categories} tags={tags} post={post} />
+    <div className="mx-auto max-w-3xl space-y-4">
+      <Link href={`/posts/${post.id}`} className={outlineLinkClassName}>
+        查看文章
+      </Link>
+      <PostEditorForm
+        categories={categories}
+        tags={tags}
+        post={post}
+        heading="编辑文章"
+      />
     </div>
   );
 }

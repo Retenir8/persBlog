@@ -37,12 +37,20 @@ export async function PUT(req: Request, { params }: RouteContext) {
           : typeof cat === "string"
             ? cat
             : undefined;
+    
+    const validVisibility = ["PUBLIC", "FRIENDS", "GROUP"].includes(body.visibility) 
+      ? body.visibility 
+      : undefined;
+    
     const post = await updatePost(id, user.id, user.role, {
       title: body.title,
       content: body.content,
       categoryId,
       tagIds: body.tagIds,
       published: body.published,
+      visibility: validVisibility,
+      visibleGroupIds: typeof body.visibleGroupIds === "string" ? body.visibleGroupIds : undefined,
+      invisibleGroupIds: typeof body.invisibleGroupIds === "string" ? body.invisibleGroupIds : undefined,
     });
     return NextResponse.json(post);
   } catch (error: unknown) {

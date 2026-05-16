@@ -126,7 +126,7 @@ function CommentItem({
           ) : (
             <span>{displayName}</span>
           )}{" "}
-          <span className="font-normal text-zinc-400">
+          <span className="font-normal text-zinc-400" suppressHydrationWarning>
             {formatTime(node.createdAt)}
           </span>
         </div>

@@ -3,6 +3,7 @@ import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/Button";
 import { NavArticleMenu } from "@/components/layout/NavArticleMenu";
 import { NavWidgetMenu } from "@/components/layout/NavWidgetMenu";
+import { getUnreadCount } from "@/lib/services/messageService";
 
 async function SignOutForm() {
   return (
@@ -21,6 +22,9 @@ async function SignOutForm() {
 
 export async function Navbar() {
   const session = await auth();
+  const unreadCount = session?.user?.id
+    ? await getUnreadCount(session.user.id)
+    : 0;
 
   return (
     <header className="border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
@@ -41,12 +45,6 @@ export async function Navbar() {
           </Link>
           <NavArticleMenu canWritePost={!!session?.user} />
           <Link
-            href="/bookshelf"
-            className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
-          >
-            书架
-          </Link>
-          <Link
             href="/music"
             className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
           >
@@ -58,8 +56,25 @@ export async function Navbar() {
           >
             摄影
           </Link>
+          <Link
+            href="/bookshelf"
+            className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+          >
+            书架
+          </Link>
           {session?.user ? (
             <>
+              <Link
+                href="/messages"
+                className="relative rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+              >
+                消息
+                {unreadCount > 0 ? (
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                ) : null}
+              </Link>
               <Link
                 href={`/users/${session.user.id}`}
                 className="rounded-md px-2 py-1 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"

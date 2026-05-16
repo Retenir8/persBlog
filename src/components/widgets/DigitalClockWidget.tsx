@@ -4,12 +4,26 @@ import { useEffect, useState } from "react";
 import { TRIO_WIDGET_MIN_HEIGHT_CLASS } from "@/lib/widgets/trioWidgetLayout";
 
 export function DigitalClockWidget({ compact }: { compact?: boolean }) {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
+    setNow(new Date());
     const id = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  if (!now) {
+    return (
+      <div
+        className={`w-full min-w-0 rounded-xl border border-zinc-900 bg-white dark:border-zinc-100 dark:bg-zinc-950 ${
+          compact
+            ? `flex flex-col justify-center ${TRIO_WIDGET_MIN_HEIGHT_CLASS} px-2 py-3`
+            : "p-6"
+        }`}
+        aria-hidden
+      />
+    );
+  }
 
   const date = compact
     ? now.toLocaleDateString("zh-CN", {

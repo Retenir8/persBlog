@@ -9,39 +9,47 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  name      String?
-  avatar    String?
-  bio       String?
-  signature String?
-  tags      String?
-  location  String?
-  occupation String?
-  github    String?
-  wechat    String?
-  website   String?
-  role      Role      @default(USER)
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
-  categories Category[]
-  tagsOwned Tag[] @relation("UserTags")
-  musicItems MusicItem[]
-  bookshelfItems BookshelfItem[]
-  photoCategories PhotoCategory[]
-  photos    Photo[]
-  guestbookReceived GuestbookEntry[] @relation("GuestbookHost")
-  guestbookWritten  GuestbookEntry[] @relation("GuestbookAuthor")
-  /// 已启用的小组件键，顺序即展示顺序
-  profileWidgets    String[]          @default([])
-  /// 一言卡片自定义文案；为空则使用内置默认句
-  zenQuoteText      String?
-  /// 心情日历：日期 YYYY-MM-DD → 短文案（JSON 对象）
-  moodCalendarData  Json              @default("{}")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  password           String
+  name               String?
+  avatar             String?
+  bio                String?
+  signature          String?
+  tags               String?
+  location           String?
+  occupation         String?
+  github             String?
+  wechat             String?
+  website            String?
+  role               Role      @default(USER)
+  posts              Post[]
+  comments           Comment[]
+  likes              Like[]
+  categories         Category[]
+  tagsOwned          Tag[] @relation("UserTags")
+  musicItems         MusicItem[]
+  bookshelfItems     BookshelfItem[]
+  photoCategories    PhotoCategory[]
+  photos             Photo[]
+  guestbookReceived  GuestbookEntry[] @relation("GuestbookHost")
+  guestbookWritten   GuestbookEntry[] @relation("GuestbookAuthor")
+  following          Follow[] @relation("Follower")
+  followers          Follow[] @relation("Following")
+  friendGroups       FriendGroup[]
+  friendGroupMembers FriendGroupMember[]
+  conversations1     Conversation[] @relation("ConversationUser1")
+  conversations2     Conversation[] @relation("ConversationUser2")
+  messages           Message[]
+  blacklists         Blacklist[] @relation("BlacklistUser")
+  blockedBy          Blacklist[] @relation("BlacklistBlocked")
+  profileWidgets     String[]        @default([])
+  zenQuoteText       String?
+  moodCalendarData   Json            @default("{}")
+  readReceiptEnabled Boolean         @default(true)
+  lastSeenAt         DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 }
 
 model GuestbookEntry {
@@ -84,20 +92,23 @@ model Tag {
 }
 
 model Post {
-  id         String    @id @default(cuid())
-  title      String
-  content    String
-  published  Boolean   @default(true)
-  authorId   String
-  author     User      @relation(fields: [authorId], references: [id])
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  tags       PostTag[]
-  comments   Comment[]
-  likes      Like[]
-  viewCount  Int       @default(0)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  title            String
+  content          String
+  published        Boolean   @default(true)
+  authorId         String
+  author           User      @relation(fields: [authorId], references: [id])
+  categoryId       String?
+  category         Category? @relation(fields: [categoryId], references: [id])
+  tags             PostTag[]
+  comments         Comment[]
+  likes            Like[]
+  viewCount        Int       @default(0)
+  visibility       String    @default("PUBLIC")
+  visibleGroupIds  String?   @default("[]")
+  invisibleGroupIds String?  @default("[]")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model PostTag {
@@ -145,6 +156,22 @@ enum BookStatus {
   FINISHED
 }
 
+model MusicItem {
+  id          String      @id @default(cuid())
+  neteaseId   String
+  kind        NeteaseKind @default(SONG)
+  note        String?
+  coverUrl    String?
+  trackTitle  String?
+  artistName  String?
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, neteaseId, kind])
+}
+
 model BookshelfItem {
   id        String     @id @default(cuid())
   title     String
@@ -162,22 +189,6 @@ model BookshelfItem {
 
   @@index([userId])
   @@index([userId, status])
-}
-
-model MusicItem {
-  id          String      @id @default(cuid())
-  neteaseId   String
-  kind        NeteaseKind @default(SONG)
-  note        String?
-  coverUrl    String?
-  trackTitle  String?
-  artistName  String?
-  sortOrder   Int         @default(0)
-  createdAt   DateTime    @default(now())
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, neteaseId, kind])
 }
 
 model PhotoCategory {
@@ -201,4 +212,97 @@ model Photo {
   createdAt  DateTime       @default(now())
   userId     String
   user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id                 String   @id @default(cuid())
+  followerId         String
+  followingId        String
+  follower           User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following          User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  notificationEnabled Boolean @default(true)
+  createdAt          DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Blacklist {
+  id           String   @id @default(cuid())
+  userId       String
+  blockedUserId String
+  user         User     @relation("BlacklistUser", fields: [userId], references: [id], onDelete: Cascade)
+  blockedUser  User     @relation("BlacklistBlocked", fields: [blockedUserId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, blockedUserId])
+}
+
+model FriendGroup {
+  id          String             @id @default(cuid())
+  name        String
+  userId      String
+  isDefault   Boolean            @default(false)
+  sortOrder   Int                @default(0)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members     FriendGroupMember[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([userId, name])
+}
+
+model FriendGroupMember {
+  id              String       @id @default(cuid())
+  groupId         String
+  userId          String
+  group           FriendGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addedAt         DateTime     @default(now())
+  lastInteractedAt DateTime    @default(now())
+
+  @@unique([groupId, userId])
+}
+
+model Conversation {
+  id        String               @id @default(cuid())
+  user1Id   String
+  user2Id   String
+  user1     User                 @relation("ConversationUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2     User                 @relation("ConversationUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages  Message[]
+  setting   ConversationSetting?
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@unique([user1Id, user2Id])
+}
+
+model ConversationSetting {
+  id              String        @id @default(cuid())
+  conversationId  String        @unique
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId          String
+  isMuted         Boolean       @default(false)
+  isPinned        Boolean       @default(false)
+  readReceiptEnabled Boolean?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  contentType    String        @default("TEXT")
+  fileUrl        String?
+  fileName       String?
+  isRead         Boolean       @default(false)
+  readAt         DateTime?
+  isRetracted    Boolean       @default(false)
+  retractedAt    DateTime?
+  createdAt      DateTime      @default(now())
+
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User          @relation(fields: [senderId], references: [id])
 }

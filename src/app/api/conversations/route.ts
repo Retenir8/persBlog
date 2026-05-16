@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { getConversations, getUnreadCount, updateConversationSetting, deleteConversation } from '@/lib/services/messageService';
+import {
+  getConversations,
+  getUnreadCount,
+  updateConversationSetting,
+  deleteConversation,
+  getOrCreateConversation,
+  getConversationById,
+} from '@/lib/services/messageService';
 
 export async function GET() {
   const session = await auth();
@@ -14,6 +21,28 @@ export async function GET() {
     return NextResponse.json({ success: true, conversations, unreadCount });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: '未登录' }, { status: 401 });
+  }
+
+  const { recipientId } = await request.json();
+
+  if (!recipientId || typeof recipientId !== 'string') {
+    return NextResponse.json({ error: '缺少对方用户 ID' }, { status: 400 });
+  }
+
+  try {
+    const { id } = await getOrCreateConversation(session.user.id, recipientId);
+    const conversation = await getConversationById(id, session.user.id);
+    return NextResponse.json({ success: true, conversation });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : '创建会话失败';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

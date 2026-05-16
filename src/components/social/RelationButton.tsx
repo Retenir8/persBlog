@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import type { RelationStatus } from '@/lib/services/followService';
+import {
+  pagePrimaryCtaClassName,
+  paneEmptyDescClass,
+  paneEmptyTitleClass,
+  surfacePanelTopClass,
+} from '@/lib/surfaceStyles';
 
 interface RelationButtonProps {
   targetUserId: string;
@@ -78,13 +84,13 @@ export default function RelationButton({ targetUserId, initialStatus, onStatusCh
     switch (status) {
       case 'none':
       case 'followed':
-        return 'bg-blue-500 hover:bg-blue-600 text-white';
+        return pagePrimaryCtaClassName;
       case 'following':
-        return 'bg-gray-200 hover:bg-gray-300 text-gray-600';
+        return 'border border-[color:var(--surface-2-border)] bg-[var(--surface-3-bg)] text-zinc-600 hover:bg-[var(--surface-2-bg)] dark:text-zinc-400';
       case 'mutual':
-        return 'bg-green-500 hover:bg-green-600 text-white';
+        return 'border border-[color:var(--surface-2-border)] bg-[var(--surface-2-bg)] text-zinc-800 dark:text-zinc-200';
       default:
-        return 'bg-blue-500 hover:bg-blue-600 text-white';
+        return pagePrimaryCtaClassName;
     }
   };
 
@@ -99,26 +105,28 @@ export default function RelationButton({ targetUserId, initialStatus, onStatusCh
           }
         }}
         disabled={isLoading}
-        className={`px-4 py-2 rounded-lg font-medium transition-colors ${getButtonStyle()} disabled:opacity-50`}
+        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-[background-color,border-color,opacity] ${getButtonStyle()} disabled:opacity-50`}
       >
         {isLoading ? '处理中...' : getButtonText()}
       </button>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
-            <h3 className="text-lg font-semibold text-black mb-4">确认取消关注</h3>
-            <p className="text-gray-600 mb-6">确定要取消关注该用户吗？</p>
-            <div className="flex gap-4 justify-end">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className={`w-full max-w-sm p-6 ${surfacePanelTopClass}`}>
+            <h3 className={`mb-4 ${paneEmptyTitleClass}`}>确认取消关注</h3>
+            <p className={`mb-6 ${paneEmptyDescClass}`}>确定要取消关注该用户吗？</p>
+            <div className="flex justify-end gap-3">
               <button
+                type="button"
                 onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg"
+                className="rounded-lg border border-[color:var(--surface-2-border)] bg-[var(--surface-3-bg)] px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300"
               >
                 取消
               </button>
               <button
+                type="button"
                 onClick={confirmUnfollow}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+                className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
               >
                 确认
               </button>

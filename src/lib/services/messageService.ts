@@ -123,7 +123,100 @@ export async function sendMessage(
   return message;
 }
 
-export async function getConversationMessages(conversationId: string, page: number = 1, pageSize: number = 50) {
+export type ConversationDTO = {
+  id: string;
+  otherUser: { id: string; name: string | null; avatar: string | null };
+  lastMessage: string;
+  lastMessageTime: Date | null;
+  lastMessageType?: string;
+  isMuted: boolean;
+  isPinned: boolean;
+  unreadCount: number;
+  updatedAt: Date;
+};
+
+export function formatConversationDTO(
+  conv: {
+    id: string;
+    user1Id: string;
+    user2Id: string;
+    updatedAt: Date;
+    user1: { id: string; name: string | null; avatar: string | null };
+    user2: { id: string; name: string | null; avatar: string | null };
+    messages: { content: string; createdAt: Date; contentType: string }[];
+    setting: { isMuted: boolean; isPinned: boolean; userId: string } | null;
+  },
+  viewerId: string,
+  unreadCount = 0,
+): ConversationDTO {
+  const otherUser = conv.user1Id === viewerId ? conv.user2 : conv.user1;
+  const lastMessage = conv.messages[0];
+  const settingForViewer =
+    conv.setting?.userId === viewerId ? conv.setting : null;
+
+  return {
+    id: conv.id,
+    otherUser,
+    lastMessage: lastMessage?.content || "",
+    lastMessageTime: lastMessage?.createdAt ?? null,
+    lastMessageType: lastMessage?.contentType,
+    isMuted: settingForViewer?.isMuted ?? false,
+    isPinned: settingForViewer?.isPinned ?? false,
+    unreadCount,
+    updatedAt: conv.updatedAt,
+  };
+}
+
+export async function getConversationById(conversationId: string, viewerId: string) {
+  const conv = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      OR: [{ user1Id: viewerId }, { user2Id: viewerId }],
+    },
+    include: {
+      user1: { select: { id: true, name: true, avatar: true } },
+      user2: { select: { id: true, name: true, avatar: true } },
+      messages: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+        select: { content: true, createdAt: true, contentType: true },
+      },
+      setting: true,
+    },
+  });
+
+  if (!conv) {
+    throw new Error("会话不存在");
+  }
+
+  const unreadCount = await prisma.message.count({
+    where: {
+      conversationId,
+      senderId: { not: viewerId },
+      isRead: false,
+    },
+  });
+
+  return formatConversationDTO(conv, viewerId, unreadCount);
+}
+
+export async function getConversationMessages(
+  conversationId: string,
+  userId: string,
+  page: number = 1,
+  pageSize: number = 50,
+) {
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      OR: [{ user1Id: userId }, { user2Id: userId }],
+    },
+  });
+
+  if (!conversation) {
+    throw new Error("无权查看此会话");
+  }
+
   const [messages, total] = await Promise.all([
     prisma.message.findMany({
       where: { conversationId },
@@ -156,21 +249,20 @@ export async function getConversations(userId: string) {
     orderBy: { updatedAt: 'desc' },
   });
 
-  return conversations.map((conv) => {
-    const otherUser = conv.user1Id === userId ? conv.user2 : conv.user1;
-    const lastMessage = conv.messages[0];
-    
-    return {
-      id: conv.id,
-      otherUser,
-      lastMessage: lastMessage?.content || '',
-      lastMessageTime: lastMessage?.createdAt,
-      lastMessageType: lastMessage?.contentType,
-      isMuted: conv.setting?.isMuted || false,
-      isPinned: conv.setting?.isPinned || false,
-      updatedAt: conv.updatedAt,
-    };
-  });
+  const withUnread = await Promise.all(
+    conversations.map(async (conv) => {
+      const unreadCount = await prisma.message.count({
+        where: {
+          conversationId: conv.id,
+          senderId: { not: userId },
+          isRead: false,
+        },
+      });
+      return formatConversationDTO(conv, userId, unreadCount);
+    }),
+  );
+
+  return withUnread;
 }
 
 export async function markMessagesAsRead(conversationId: string, userId: string) {
@@ -247,4 +339,24 @@ export async function deleteConversation(conversationId: string, userId: string)
   }
 
   return prisma.conversation.delete({ where: { id: conversationId } });
+}
+
+export async function clearConversationMessages(conversationId: string, userId: string) {
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      OR: [{ user1Id: userId }, { user2Id: userId }],
+    },
+  });
+
+  if (!conversation) {
+    throw new Error('会话不存在');
+  }
+
+  await prisma.message.deleteMany({ where: { conversationId } });
+
+  await prisma.conversation.update({
+    where: { id: conversationId },
+    data: { updatedAt: new Date() },
+  });
 }

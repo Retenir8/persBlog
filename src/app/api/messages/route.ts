@@ -20,7 +20,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const result = await getConversationMessages(conversationId, page, pageSize);
+    const result = await getConversationMessages(
+      conversationId,
+      session.user.id,
+      page,
+      pageSize,
+    );
     await markMessagesAsRead(conversationId, session.user.id);
     return NextResponse.json({ success: true, ...result });
   } catch (error: any) {

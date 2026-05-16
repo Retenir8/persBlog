@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 interface Friend {
   id: string;
@@ -15,6 +17,7 @@ interface Group {
 }
 
 export default function FriendsPage() {
+  const { data: session } = useSession();
   const [groups, setGroups] = useState<Group[]>([]);
   const [activeGroup, setActiveGroup] = useState<string>('all');
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -286,8 +289,19 @@ export default function FriendsPage() {
       </div>
 
       {friends.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="py-12 text-center text-gray-500">
           <p>暂无好友</p>
+          <p className="mt-2 text-sm">互相关注后即可成为好友</p>
+          <Link
+            href={
+              session?.user?.id
+                ? `/users/${session.user.id}/subscriptions`
+                : "/login"
+            }
+            className="mt-4 inline-block rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+          >
+            去添加好友
+          </Link>
         </div>
       )}
     </div>

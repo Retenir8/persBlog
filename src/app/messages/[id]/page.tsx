@@ -12,10 +12,8 @@ export default function ChatRedirectPage() {
   }, [router, params]);
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="text-center">
-        <p className="text-gray-500">正在跳转到消息页面...</p>
-      </div>
+    <div className="flex h-screen items-center justify-center bg-[var(--page-canvas)]">
+      <p className="text-zinc-500 dark:text-zinc-400">正在跳转到消息页面...</p>
     </div>
   );
 }

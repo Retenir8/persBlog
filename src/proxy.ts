@@ -14,6 +14,7 @@ export default auth((req) => {
     pathname.startsWith("/bookshelf") ||
     pathname.startsWith("/music") ||
     pathname.startsWith("/photos") ||
+    pathname.startsWith("/messages") ||
     /^\/posts\/[^/]+\/edit$/.test(pathname);
 
   if (!needsLogin) {
@@ -49,5 +50,7 @@ export const config = {
     "/music/:path*",
     "/photos",
     "/photos/:path*",
+    "/messages",
+    "/messages/:path*",
   ],
 };

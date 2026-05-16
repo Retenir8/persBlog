@@ -1,6 +1,9 @@
 import { getUserWithPosts } from "@/lib/services/userService";
+import { getRelationStatus } from "@/lib/services/followService";
+import type { RelationStatus } from "@/lib/services/followService";
 import { auth } from "@/lib/auth";
 import { ProfileEditorClient } from "./ProfileEditorClient";
+import { ProfileVisitorActions } from "@/components/social/ProfileVisitorActions";
 import { GuestbookSection } from "@/components/guestbook/GuestbookSection";
 import type { GuestbookEntryDTO } from "@/components/guestbook/GuestbookSection";
 import { listGuestbookForHost } from "@/lib/services/guestbookService";
@@ -41,6 +44,12 @@ export default async function UserProfilePage({
 
   const isOwner = session?.user?.id === id;
 
+  let visitorRelation: RelationStatus | null = null;
+  if (session?.user?.id && !isOwner) {
+    const relation = await getRelationStatus(session.user.id, id);
+    visitorRelation = relation.status;
+  }
+
   const gbRaw = await listGuestbookForHost(id);
   const guestbookInitial: GuestbookEntryDTO[] = (gbRaw ?? []).map((e) => ({
     id: e.id,
@@ -56,6 +65,11 @@ export default async function UserProfilePage({
 
   return (
     <div className="space-y-0">
+      {visitorRelation !== null && (
+        <div className="flex justify-center pb-2">
+          <ProfileVisitorActions targetUserId={id} initialStatus={visitorRelation} />
+        </div>
+      )}
       <ProfileEditorClient
         user={user}
         isOwner={isOwner}
